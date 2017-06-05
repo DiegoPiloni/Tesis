@@ -1,0 +1,30 @@
+Pros y Cons de LogicBase con RGL (como está ahora):
+
+Pros:
+* Uso de Resource Grammar Library (RGL) ahorra trabajo "a mano" y permite una
+definición sintácticamente correcta por construcción.
+
+Cons:
+* Entender todo el poder de la RGL no es tan fácil (al menos para mi).
+* No pude resolver aún:
+- La frase "A esté arriba de B" es aceptada.
+- Quisiera poder decir "A es un triangulo", además de "A es triangular". (para las formas) 
+- No puedo definir una frase para equivalencia de formulas.
+- Uso el verbo "estar" en Pred2, lo que no está bueno si queremos hacer la gramática 
+paramétrica en signaturas. Podria arreglarse, agregando una nueva categoria
+Pred2Pos (Posicional).
+- Solo se puede usar la palabra "cada", para frases que representen el paratodo.
+P.ej: cada figura roja es grande. 
+Estaria bueno poder usar "toda", por ej, también.
+- Con el existe pasa algo similar, solo se usa "alguna"
+P.ej: alguna figura roja es grande.
+Estaria bueno poder decir "hay una figura roja grande"
+- generación de formula a partir de cuantificadores "in situ". 
+(pienso que podria intentar arreglarlo, extendiendo la categoria Ind, a Ind e IndQ (cuantificador).
+- generacion automatica de variables libres, para cuantificacion
+- no pude aun traducir modificacion de Kind a una conjuncion en el dominio.
+Tampoco en español queda bien, cada figura chica roja triangular. (Necesitamos introduccion de list categories!)
+- no se puede usar Pred2 en rango ni en termino. (se resuelve con aplicacion parcial de Pred2)
+ej 1: Todas las figuras que están arriba de A son rojas.
+ej 2: Todas las figuras rojas están arriba de A.
+- Negacion en rango 
