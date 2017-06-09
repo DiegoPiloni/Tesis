@@ -10,8 +10,10 @@ lin
   PNeg p = negate p ;
   PConj conj p q = bin_op p conj q ;
   PImpl p q = bin_op p "⇒" q ;
-  PUniv v p = (glue "<∀" v) ++ ":" ++ ":" ++ p ++ ">" ;
-  PExist v p = (glue "<∃" v) ++ ":" ++ ":" ++ p ++ ">" ;
+  PUniv1 v t = (glue "<∀" v) ++ ":" ++ ":" ++ t ++ ">" ;
+  PExist1 v t = (glue "<∃" v) ++ ":" ++ ":" ++ t ++ ">" ;
+  PUniv2 v r t = (glue "<∀" v) ++ ":" ++ r ++ ":" ++ t ++ ">" ;
+  PExist2 v r t = (glue "<∃" v) ++ ":" ++ r ++ ":" ++ t ++ ">" ;
   APred1 f x = apply f x ;
   AEqual x y = equal x y ;
   APred2 f x y = apply (apply f x) y ;
@@ -34,9 +36,10 @@ lin
   -- AKind k x = apply k x ;
   PNegAtom = negate ;
   PNegEqual x y = negate (parentesis (equal x y)) ;
-  UnivIS v k p = (glue "<∀" v) ++  ":" ++ k ++ ":" ++ glue (apply p v) ">" ;
-  ExistIS v k p =  (glue "<∃" v) ++ ":" ++ k ++ ":" ++ glue (apply p v) ">" ;
-  ModKind k m = "modKind" ;
+  -- ya no se linealizan los arboles UnivIS, ExistIS a lenguaje simbólico.
+  -- UnivIS v k p = (glue "<∀" v) ++  ":" ++ k ++ ":" ++ glue (apply p v) ">" ;
+  -- ExistIS v k p =  (glue "<∃" v) ++ ":" ++ k ++ ":" ++ glue (apply p v) ">" ;
+  -- ModKind k m = "modKind" ;
 
 oper
     idS : Str -> Str = \s -> s ;
@@ -73,5 +76,6 @@ lin
   Abajo = "abajo" ;
 
   -- Kind
-  Figura = "" ;
+  -- Ya no se linealizan los Kinds.
+  -- Figura = "" ;
 }

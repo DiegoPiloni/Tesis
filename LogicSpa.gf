@@ -27,10 +27,11 @@ lin
       (mkVP (mkNP the_Quant (mkCN case_N (mkAdv that_Subj p))))) ; 
   PConj = mkS ;
   PImpl p q = mkS (mkAdv if_Subj p) (mkS then_Adv q) ;
-  PUniv v p = mkS (mkAdv for_Prep (mkNP all_Predet (mkNP (SymbPN v)))) p ;
-  PExist v p = 
-    mkS (mkCl (mkNP a_Quant (mkCN (mkCN element_N (mkNP (SymbPN v))) 
-      (mkAP (mkAP such_A) p)))) ;
+  -- ya no se puede pueden parsear frases de la forma "para todo x, x es rojo".
+  -- PUniv v p = mkS (mkAdv for_Prep (mkNP all_Predet (mkNP (SymbPN v)))) p ;
+  -- PExist v p = 
+  --  mkS (mkCl (mkNP a_Quant (mkCN (mkCN element_N (mkNP (SymbPN v))) 
+  --    (mkAP (mkAP such_A) p)))) ;
   APred1 f x = mkCl x f ;
   AEqual x y = mkCl x equal_A2 y ;
   APred2 f x y = mkCl x (E.UseComp_estar (mkComp (mkAP f y))) ;  -- no está bueno si quiero hacerlo parametrico en la signatura
