@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>resumen</title>
+
+
+<style type="text/css">
+body {
+  font-family: Helvetica, arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: white;
+  padding: 30px; }
+
+body > *:first-child {
+  margin-top: 0 !important; }
+body > *:last-child {
+  margin-bottom: 0 !important; }
+
+a {
+  color: #4183C4; }
+a.absent {
+  color: #cc0000; }
+a.anchor {
+  display: block;
+  padding-left: 30px;
+  margin-left: -30px;
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0; }
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 20px 0 10px;
+  padding: 0;
+  font-weight: bold;
+  -webkit-font-smoothing: antialiased;
+  cursor: text;
+  position: relative; }
+
+h1:hover a.anchor, h2:hover a.anchor, h3:hover a.anchor, h4:hover a.anchor, h5:hover a.anchor, h6:hover a.anchor {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA09pVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoMTMuMCAyMDEyMDMwNS5tLjQxNSAyMDEyLzAzLzA1OjIxOjAwOjAwKSAgKE1hY2ludG9zaCkiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OUM2NjlDQjI4ODBGMTFFMTg1ODlEODNERDJBRjUwQTQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OUM2NjlDQjM4ODBGMTFFMTg1ODlEODNERDJBRjUwQTQiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5QzY2OUNCMDg4MEYxMUUxODU4OUQ4M0REMkFGNTBBNCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5QzY2OUNCMTg4MEYxMUUxODU4OUQ4M0REMkFGNTBBNCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PsQhXeAAAABfSURBVHjaYvz//z8DJYCRUgMYQAbAMBQIAvEqkBQWXI6sHqwHiwG70TTBxGaiWwjCTGgOUgJiF1J8wMRAIUA34B4Q76HUBelAfJYSA0CuMIEaRP8wGIkGMA54bgQIMACAmkXJi0hKJQAAAABJRU5ErkJggg==) no-repeat 10px center;
+  text-decoration: none; }
+
+h1 tt, h1 code {
+  font-size: inherit; }
+
+h2 tt, h2 code {
+  font-size: inherit; }
+
+h3 tt, h3 code {
+  font-size: inherit; }
+
+h4 tt, h4 code {
+  font-size: inherit; }
+
+h5 tt, h5 code {
+  font-size: inherit; }
+
+h6 tt, h6 code {
+  font-size: inherit; }
+
+h1 {
+  font-size: 28px;
+  color: black; }
+
+h2 {
+  font-size: 24px;
+  border-bottom: 1px solid #cccccc;
+  color: black; }
+
+h3 {
+  font-size: 18px; }
+
+h4 {
+  font-size: 16px; }
+
+h5 {
+  font-size: 14px; }
+
+h6 {
+  color: #777777;
+  font-size: 14px; }
+
+p, blockquote, ul, ol, dl, li, table, pre {
+  margin: 15px 0; }
+
+hr {
+  background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAECAYAAACtBE5DAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OENDRjNBN0E2NTZBMTFFMEI3QjRBODM4NzJDMjlGNDgiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OENDRjNBN0I2NTZBMTFFMEI3QjRBODM4NzJDMjlGNDgiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo4Q0NGM0E3ODY1NkExMUUwQjdCNEE4Mzg3MkMyOUY0OCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo4Q0NGM0E3OTY1NkExMUUwQjdCNEE4Mzg3MkMyOUY0OCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PqqezsUAAAAfSURBVHjaYmRABcYwBiM2QSA4y4hNEKYDQxAEAAIMAHNGAzhkPOlYAAAAAElFTkSuQmCC) repeat-x 0 0;
+  border: 0 none;
+  color: #cccccc;
+  height: 4px;
+  padding: 0;
+}
+
+body > h2:first-child {
+  margin-top: 0;
+  padding-top: 0; }
+body > h1:first-child {
+  margin-top: 0;
+  padding-top: 0; }
+  body > h1:first-child + h2 {
+    margin-top: 0;
+    padding-top: 0; }
+body > h3:first-child, body > h4:first-child, body > h5:first-child, body > h6:first-child {
+  margin-top: 0;
+  padding-top: 0; }
+
+a:first-child h1, a:first-child h2, a:first-child h3, a:first-child h4, a:first-child h5, a:first-child h6 {
+  margin-top: 0;
+  padding-top: 0; }
+
+h1 p, h2 p, h3 p, h4 p, h5 p, h6 p {
+  margin-top: 0; }
+
+li p.first {
+  display: inline-block; }
+li {
+  margin: 0; }
+ul, ol {
+  padding-left: 30px; }
+
+ul :first-child, ol :first-child {
+  margin-top: 0; }
+
+dl {
+  padding: 0; }
+  dl dt {
+    font-size: 14px;
+    font-weight: bold;
+    font-style: italic;
+    padding: 0;
+    margin: 15px 0 5px; }
+    dl dt:first-child {
+      padding: 0; }
+    dl dt > :first-child {
+      margin-top: 0; }
+    dl dt > :last-child {
+      margin-bottom: 0; }
+  dl dd {
+    margin: 0 0 15px;
+    padding: 0 15px; }
+    dl dd > :first-child {
+      margin-top: 0; }
+    dl dd > :last-child {
+      margin-bottom: 0; }
+
+blockquote {
+  border-left: 4px solid #dddddd;
+  padding: 0 15px;
+  color: #777777; }
+  blockquote > :first-child {
+    margin-top: 0; }
+  blockquote > :last-child {
+    margin-bottom: 0; }
+
+table {
+  padding: 0;border-collapse: collapse; }
+  table tr {
+    border-top: 1px solid #cccccc;
+    background-color: white;
+    margin: 0;
+    padding: 0; }
+    table tr:nth-child(2n) {
+      background-color: #f8f8f8; }
+    table tr th {
+      font-weight: bold;
+      border: 1px solid #cccccc;
+      margin: 0;
+      padding: 6px 13px; }
+    table tr td {
+      border: 1px solid #cccccc;
+      margin: 0;
+      padding: 6px 13px; }
+    table tr th :first-child, table tr td :first-child {
+      margin-top: 0; }
+    table tr th :last-child, table tr td :last-child {
+      margin-bottom: 0; }
+
+img {
+  max-width: 100%; }
+
+span.frame {
+  display: block;
+  overflow: hidden; }
+  span.frame > span {
+    border: 1px solid #dddddd;
+    display: block;
+    float: left;
+    overflow: hidden;
+    margin: 13px 0 0;
+    padding: 7px;
+    width: auto; }
+  span.frame span img {
+    display: block;
+    float: left; }
+  span.frame span span {
+    clear: both;
+    color: #333333;
+    display: block;
+    padding: 5px 0 0; }
+span.align-center {
+  display: block;
+  overflow: hidden;
+  clear: both; }
+  span.align-center > span {
+    display: block;
+    overflow: hidden;
+    margin: 13px auto 0;
+    text-align: center; }
+  span.align-center span img {
+    margin: 0 auto;
+    text-align: center; }
+span.align-right {
+  display: block;
+  overflow: hidden;
+  clear: both; }
+  span.align-right > span {
+    display: block;
+    overflow: hidden;
+    margin: 13px 0 0;
+    text-align: right; }
+  span.align-right span img {
+    margin: 0;
+    text-align: right; }
+span.float-left {
+  display: block;
+  margin-right: 13px;
+  overflow: hidden;
+  float: left; }
+  span.float-left span {
+    margin: 13px 0 0; }
+span.float-right {
+  display: block;
+  margin-left: 13px;
+  overflow: hidden;
+  float: right; }
+  span.float-right > span {
+    display: block;
+    overflow: hidden;
+    margin: 13px auto 0;
+    text-align: right; }
+
+code, tt {
+  margin: 0 2px;
+  padding: 0 5px;
+  white-space: nowrap;
+  border: 1px solid #eaeaea;
+  background-color: #f8f8f8;
+  border-radius: 3px; }
+
+pre code {
+  margin: 0;
+  padding: 0;
+  white-space: pre;
+  border: none;
+  background: transparent; }
+
+.highlight pre {
+  background-color: #f8f8f8;
+  border: 1px solid #cccccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px; }
+
+pre {
+  background-color: #f8f8f8;
+  border: 1px solid #cccccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px; }
+  pre code, pre tt {
+    background-color: transparent;
+    border: none; }
+
+sup {
+    font-size: 0.83em;
+    vertical-align: super;
+    line-height: 0;
+}
+
+kbd {
+  display: inline-block;
+  padding: 3px 5px;
+  font-size: 11px;
+  line-height: 10px;
+  color: #555;
+  vertical-align: middle;
+  background-color: #fcfcfc;
+  border: solid 1px #ccc;
+  border-bottom-color: #bbb;
+  border-radius: 3px;
+  box-shadow: inset 0 -1px 0 #bbb
+}
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+@media screen and (min-width: 914px) {
+    body {
+        width: 854px;
+        margin:0 auto;
+    }
+}
+@media print {
+	table, pre {
+		page-break-inside: avoid;
+	}
+	pre {
+		word-wrap: break-word;
+	}
+}
+</style>
+
+
+</head>
+
+<body>
+
+<p><head>
+<link rel="stylesheet" type="text/css" href="resumen.css">
+</head></p>
+
+<h1 id="toc_0">Grammatical Framework</h1>
+
+<p><a href="http://www.grammaticalframework.org/">Grammatical Framework</a> (GF) es un lenguaje de programación diseñado para escribir gramáticas multilingües.
+Inspirado por la construcción de compiladores se basa en la definición de una sintaxis abstracta y mapeos entre la sintaxis abstracta y lenguajes concretos.
+Creado por <a href="http://www.cse.chalmers.se/%7Eaarne/">Aarne Ranta</a>, Profesor de Ciencias de la Computación en la Universidad de Gotemburgo.
+GF fue creado en 1998 en <a href="http://www.xrce.xerox.com/">Xerox Research Centre Europe</a>, Grenoble, en el proyecto Multilingual Document Authoring.</p>
+
+<h3 id="toc_1">GF es:</h3>
+
+<ul>
+<li>Un lenguaje de propósito específico en gramáticas, como <a href="http://dinosaur.compilertools.net/yacc/">YACC</a>, <a href="https://www.gnu.org/software/bison/">Bison</a>, <a href="https://www.haskell.org/happy/">Happy</a>, <a href="http://bnfc.digitalgrammars.com/">BNFC</a>.</li>
+<li>Un lenguaje de programación funcional, como <a href="https://www.haskell.org/">Haskell</a>, <a href="https://en.wikipedia.org/wiki/Lisp_(programming_language)">Lisp</a>, <a href="http://ocaml.org/">OCaml</a>, <a href="http://www.smlnj.org/">SML</a>, <a href="http://schemers.org/">Scheme</a>.</li>
+<li>Una plataforma de desarrollo para gramáticas de lenguaje natural, como <a href="http://moin.delph-in.net/LkbTop">LKB</a>, <a href="http://www2.parc.com/isl/groups/nltt/xle/">XLE</a>, <a href="http://www.issco.unige.ch/en/research/projects/regulus/news.shtml">Regulus</a>.</li>
+<li>Un formalismo de gramáticas categoriales, como <a href="http://calligramme.loria.fr/acg/">ACG</a>, <a href="http://openccg.sourceforge.net/">CCG</a>.</li>
+<li>Un framework lógico, como <a href="http://wiki.portal.chalmers.se/agda/pmwiki.php">Agda</a>, <a href="https://coq.inria.fr/">Coq</a>, <a href="http://www.cl.cam.ac.uk/research/hvg/Isabelle/">Isabelle</a>, equipado con sintaxis concreta en adición a lógica.</li>
+<li>Una plataforma para traducción automática, como <a href="http://www.statmt.org/moses/">Moses</a>, <a href="https://es.wikipedia.org/wiki/Apertium">Apertium</a>.</li>
+</ul>
+
+<h3 id="toc_2">Licencias y disponibilidad</h3>
+
+<p>GF es de código abierto, con licencia <a href="http://www.grammaticalframework.org/LICENSE">GPL</a> para el programa y <a href="http://www.grammaticalframework.org/LICENSE">LGPL</a>, <a href="http://www.grammaticalframework.org/LICENSE">BSD</a> para las liberías. 
+Está disponible en:</p>
+
+<ul>
+<li>Linux</li>
+<li>Mac OS X</li>
+<li>Windows</li>
+<li>Android (via Java)</li>
+<li>Javascript (via compilación)</li>
+</ul>
+
+<h2 id="toc_3">¿Por qué gramáticas?</h2>
+
+<h3 id="toc_4">Tradición vs. GF</h3>
+
+<p>Tradicionalmente las gramáticas de lenguaje natural han sido vistas únicamente como parte de la teoría lingüística. 
+GF sugiere un punto de vista más computacional, diferente al de las gramáticas tradicionales, el cual puede ser visto como &quot;compilación de lenguaje natural&quot;, basado en los fundamentos de construcción de compiladores, teniendo en cuenta que los compiladores han sido un caso exitoso del uso de gramáticas.</p>
+
+<h3 id="toc_5">Precisión vs. robustez</h3>
+
+<p>La implementación de gramáticas ofrece una gran precisión en la traducción de lenguajes, teniendo como desventaja una pérdida en la cantidad de frases aceptadas. 
+Los métodos estadísticos poseen, al contrario, mayor robustez pero con dificultades de conseguir la misma precisión que las gramáticas.
+Tomando como trabajo la traducción de lenguaje natural a un lenguaje formal, como el de la lógica de primer orden y pensando además en una posible utilización de la herramienta en un ámbito educativo, parece oportuno priorizar la precisión de la traducción antes que la cobertura.
+Para trabajar con la herramienta y lidiar con el hecho de no cubrir algunas oraciones de lenguaje natural, la implementación contará con algun método de completado de frases, al estilo tab-completion, para la construcción guiada de frases correctas para la gramática. 
+Como trabajo futuro podría ser interesante construir un sistema híbrido, con el objetivo de unir la gramática definida con herramientas estadísticas y lograr así un sistema más robusto.</p>
+
+<h3 id="toc_6">GF como un lenguaje de programación</h3>
+
+<p>Las gramáticas en GF son vistas como programas declarativos capaces de:</p>
+
+<ul>
+<li>parsear</li>
+<li>generar</li>
+<li>traducir</li>
+</ul>
+
+<p>GF es un lenguaje de programación avanzado y de alto nivel, permitiendo:</p>
+
+<ul>
+<li>Programación funcional: Una forma abstracta y compacta de escribir gramáticas.</li>
+<li>Funciones de alto orden.</li>
+<li>Tipos dependientes.</li>
+<li>Type-checking estático: Gramáticas compiladas.</li>
+<li>Pattern matching sobre constructores de datos.</li>
+<li>Sistema de modulos con herencia y modulos parametrizados.</li>
+</ul>
+
+<h3 id="toc_7">Resource Grammar Library (RGL)</h3>
+
+<p>GF cuenta además con una librería llamada <a href="http://www.grammaticalframework.org/lib/doc/synopsis.html">RGL</a> (Resource Grammar Library) que provee inflexiones morfológicas y reglas sintácticas de varios lenguajes (actualmente 32), incluído el español.</p>
+
+<p>La RGL maneja de manera inteligente la morfología de la mayoría de estos lenguajes.
+Un caso donde puede aprovecharse esto es que la librería defina automáticamente las variaciones de una palabra analizando la morfología de la misma.</p>
+
+<p>Por ejemplo, en inglés un verbo regular como talk, genera automáticamente sus diferentes inflexiones:</p>
+
+<div><pre><code class="language-none">mkV : Str -&gt; V
+mkV &quot;talk&quot; =&gt; talk, talks, talked, talked, talking</code></pre></div>
+
+<p>Esto permite la construcción de un lexicón solo dando una única forma de cada palabra.</p>
+
+<h3 id="toc_8">Diagrama de funcionamento de GF</h3>
+
+<p>El funcionamento de GF está inspirado fuertemente por el funcionamento de compiladores. </p>
+
+<p>El modelo puede resumirse como un &quot;Multi-source Multi-target compiler&quot;.</p>
+
+<p><img src="Images/normal_compiler.png" alt="compiler"></p>
+
+<h2 id="toc_9">Sintaxis abstracta y concreta</h2>
+
+<h3 id="toc_10">Sintaxis abstracta</h3>
+
+<p>La sintaxis abstracta formaliza la semántica esencial que es común a todos los lenguajes.
+Se construye mediante una gramática abstracta, definiendo los posibles árboles de sintaxis abstractos (AST).</p>
+
+<p>En la sintaxis abstracta se definen:</p>
+
+<ul>
+<li><p>Categorías (cat): Que serán los tipos de los AST.</p></li>
+<li><p>Funciones (fun) sobre las categorías definidas. Estas funciones son las que definen los AST.</p></li>
+</ul>
+
+<h3 id="toc_11">Sintaxis concreta</h3>
+
+<p>La sintaxis concreta es definida mediante mapeos entre la sintaxis abstracta y diferentes lenguajes concretos.
+Con estas herramientas es posible parsear sentencias en algún lenguaje definido por la gramática concreta, y además linealizar desde un árbol abstracto, es decir, generar sentencias en algún lenguaje concreto.
+GF permite una gramática abstracta en conjunto a varias gramáticas concretas, de esta manera posibilitando la traducción entre distintos lenguajes.</p>
+
+<p>En la sintaxis concreta se definen:</p>
+
+<ul>
+<li><p>Categorías de linealización (lincat): Son los tipos concretos que se le asignan a cada categoría de la sintaxis abstracta. Por ejemplo, strings, records y tables.</p></li>
+<li><p>Linealización (lin) de los AST, teniendo en cuenta las categorías de linealización.</p></li>
+</ul>
+
+<h4 id="toc_12">Un caso de uso pequeño</h4>
+
+<p>Ejemplo con expresiones aritméticas en Java:</p>
+
+<p><img src="Images/java_compiler.png" alt="java_compiler"></p>
+
+<p>Se desea compilar una expresión aritmética en Java a código binario de JVM. Para ello existe una sintaxis abstracta común para ambas notaciones y es posible generar un AST desde la expresión en Java y  además es posible generar una expresión en JVM desde el AST.
+Se logra de esta manera una traducción desde Java a JVM.</p>
+
+<p>Sintaxis Abstracta</p>
+
+<div><pre><code class="language-none">cat Exp ;
+fun Add : Exp -&gt; Exp -&gt; Exp ;</code></pre></div>
+
+<p>Sintaxis concreta (Java)</p>
+
+<div><pre><code class="language-none">lincat Exp = Str ;
+lin Add x y = x ++ &quot;+&quot; ++ y ;</code></pre></div>
+
+<p>Sintaxis concreta (JVM bytecode)</p>
+
+<div><pre><code class="language-none">lincat Exp = Str ;
+lin Add x y = x ++ y ++ &quot;01100000&quot; ;</code></pre></div>
+
+<h2 id="toc_13">Compilando lenguaje natural</h2>
+
+<p>Para traducir entre varios lenguajes, normalmente sería necesario una traducción independiente para cada par de lenguajes.</p>
+
+<p><img src="Images/complete_graph.png" alt="complete_graph"></p>
+
+<p>Sin embargo, con GF la sintaxis abstracta juega el papel de &quot;Interlingua&quot;, donde solo es necesario traducir entre cada lenguaje y la Interlingua.
+A modo de ejemplo, si se desea traducir desde Español a Inglés, debe traducirse primero desde Español a la Interlingua, y luego desde la Interlingua al Inglés.
+El caso inverso, es decir, traducir desde Inglés a Español, funciona de la misma manera.
+Se puede decir entonces que con GF es posible realizar una compilación y decompilación de la misma manera.</p>
+
+<p><img src="Images/n_to_1_graph.png" alt="n_to_1_graph"></p>
+
+<h3 id="toc_14">¿Cómo se logra la traducción de lenguaje natural?</h3>
+
+<p>Sintaxis Abstracta:</p>
+
+<div><pre><code class="language-none">fun Pred : NP -&gt; VP -&gt; S
+fun Compl : V2 -&gt; NP -&gt; VP</code></pre></div>
+
+<p><img src="Images/AST_jlm.png" alt="AST_john_loves_mary"></p>
+
+<p>Sintaxis concreta: (SVO)</p>
+
+<div><pre><code class="language-none">lin Pred s vo = s ++ vo
+lin Compl v o = v ++ o</code></pre></div>
+
+<p>Sintaxis concreta: (SOV)</p>
+
+<div><pre><code class="language-none">lin Pred s vo = s ++ vo
+lin Compl v o = o ++ v</code></pre></div>
+
+<p><img src="Images/parse_tree_english.png" alt="parse_tree_english">
+<img src="Images/parse_tree_latin.png" alt="parse_tree_latin"></p>
+
+<h3 id="toc_15">Records y tables</h3>
+
+<p>GF provee records y tables, además de strings, para definir la sintaxis concreta.</p>
+
+<p><img src="Images/parse_tree_arabic.png" alt="parse_tree_arabic"></p>
+
+<p>Se necesitan records para (VSO). No hay una manera de producir la linealización de la frase sin separar al predicado en dos partes (verbo y objeto), mediante un record.</p>
+
+<p>Sintaxis concreta: (VSO)</p>
+
+<div><pre><code class="language-none">lin Pred s vo = vo.verb ++ s ++ vo.obj
+lin Compl v o = {verb = v ; obj = o}</code></pre></div>
+
+<p>Las modificaciones de una misma palabra o frase, como género, número, persona o polaridad requieren del uso de parámetros y tables.</p>
+
+<p>Por ejemplo, en ingles un verbo puede variar según los siguientes modificadores de tiempo y persona.</p>
+
+<div><pre><code class="language-none">param P = Inf | Sg3P | Past | PastPart | PresPart</code></pre></div>
+
+<p>Uso de tables:</p>
+
+<div><pre><code class="language-none">lin Love = table {
+    Inf =&gt; &quot;love&quot;;
+    Sg3P =&gt; &quot;loves&quot;;
+    Past | PastPart =&gt; &quot;loved&quot;;
+    PresPart =&gt; &quot;loving&quot;;
+}</code></pre></div>
+
+<h3 id="toc_16">Concordancia en sintaxis concreta</h3>
+
+<p>Es importante notar que la sintaxis abstracta permanece sin cambios.</p>
+
+<div><pre><code class="language-none">lin She = {
+    s = table {Nom =&gt; &quot;she&quot; ; Acc =&gt; &quot;her&quot; };
+    a = Sg3P;
+}</code></pre></div>
+
+<div><pre><code class="language-none">lin Pred s vo = s.s ! Nom ++ vo ! s.a
+lin Compl v o = table { a =&gt; v ! a ++ o.s ! acc };</code></pre></div>
+
+<div><pre><code class="language-none">Ejemplo: she loves her</code></pre></div>
+
+<h3 id="toc_17"> Parallel multiple context free grammars</h3>
+
+<p>GF usa internamente <a href="http://www.sciencedirect.com/science/article/pii/030439759190374B">Parallel multiple context free grammars (PMCFG)</a>, definidas como gramáticas ligeramente sensitivas al contexto. Lo que en GF puede pensarse de manera simple como gramáticas sobre tuplas. Un hecho interesante sobre PMCFG es que, al igual que las CGF, permite parsing polinomial. </p>
+
+<h3 id="toc_18">Abstracción multilingüe</h3>
+
+<ul>
+<li>Sintaxis abstracta
+
+<ul>
+<li>Estructura de árboles: Constituyentes y semántica.</li>
+</ul></li>
+<li>Sintaxis concreta
+
+<ul>
+<li>Palabras</li>
+<li>Orden de palabras</li>
+<li>Inflección</li>
+<li>Concordancia</li>
+</ul></li>
+</ul>
+
+<h2 id="toc_19">Trabajo a realizar</h2>
+
+<p>El trabajo consiste en lograr traducir un fragmento de lenguaje natural a un lenguaje simbólico de lógica de primer orden.
+Se tomó como motivación producir fórmulas lógicas para el programa <a href="https://github.com/manugunther/sat">Sat</a>.</p>
+
+<p>Una de las ventajas de GF es que permite realizar una modularización paramétrica mediante funtores, los cuales admiten la definición de una gramática incompleta y la posibilidad de completarla con un lexicón. El objetivo es escribir una gramática incompleta de la manera más general posible, que abarque las diferentes construcciones del lenguaje formal de la lógica y luego poder instanciarla con diferentes lexicones, entre ellos, el de figuras geométricas de Sat.</p>
+
+<h3 id="toc_20">Motivación al trabajo</h3>
+
+<p>El primer desafío que se encuentra en el aprendizaje de la lógica está dado por la barrera lingüística impuesta por el lenguaje simbólico y artificial de la misma. Consecuentemente parece razonable comenzar un curso de lógica con la traducción de sentencias expresadas en lenguaje natural (digamos español) a su correspondiente formulación símbolica en la lógica en cuestión (proposicional, de primer orden, etc.). Las dificultades de esta traducción vienen dadas, entre otras, por la ambigüedad de la sentencia en lenguaje natural y por la puntillosidad con la que se deben construir las fórmulas lógicas.</p>
+
+<p>El objetivo de este proyecto es extender el programa Sat con un módulo que permita a estudiantes la exploración de la traducción de lenguaje natural a fórmulas de lógica de primer orden y viceversa. De esta manera, la/el estudiante puede ir familiarizándose con la escritura formal a través de ejemplos que ella/el construye y contrastar su formalización con todas las traducciones posibles y viceversa. Esta traducción se basará teóricamente en la formalización de lenguaje natural utilizando <a href="https://books.google.com.ar/books?hl=sv&amp;lr=&amp;id=A5m13eGOcqYC&amp;oi=fnd&amp;pg=PA1&amp;dq=aarne+ranta&amp;ots=KjH2Put2Wa&amp;sig=J__Gk-RZctvQzSqJBDVXyngpY1Y&amp;redir_esc=y#v">teoría de tipos propuesta por Ranta</a> y para la implementación se utilizará el Grammatical Framework.</p>
+
+<h2 id="toc_21"> Trabajo realizado hasta el momento</h2>
+
+<h3 id="toc_22">Gramática abstracta</h3>
+
+<p>Para construir la gramática abstracta es necesario primero definir categorías, que serán los tipos de los AST, y luego funciones sobre estas categorías.
+Las presentadas a continuación son inspiradas por el trabajo de A. Ranta: <a href="https://www.semanticscholar.org/paper/Translating-between-Language-and-Logic-What-Is-Eas-Ranta/581281bb6292814ce285dc1de82a9785fdac2b5d">Translating between Language and Logic: What Is Easy and What Is Difficult</a>.</p>
+
+<h4 id="toc_23">Base</h4>
+
+<p>Una lista de las categorías básicas de la gramática abstracta definida hasta el momento.</p>
+
+<table>
+<thead>
+<tr>
+<th>Categorías</th>
+<th style="text-align: center">Descripción</th>
+<th style="text-align: center">Ejemplos</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Prop</td>
+<td style="text-align: center">proposición, compleja o atomica</td>
+<td style="text-align: center">A es rojo y B es grande</td>
+</tr>
+<tr>
+<td>Atom</td>
+<td style="text-align: center">propisición atómica</td>
+<td style="text-align: center">A es rojo</td>
+</tr>
+<tr>
+<td>AtomEqual</td>
+<td style="text-align: center">igualdad (atómica)</td>
+<td style="text-align: center">A es igual a B</td>
+</tr>
+<tr>
+<td>Pred1</td>
+<td style="text-align: center">Predicado unario</td>
+<td style="text-align: center">es rojo</td>
+</tr>
+<tr>
+<td>Pred2</td>
+<td style="text-align: center">Predicado binario</td>
+<td style="text-align: center">está arriba de</td>
+</tr>
+<tr>
+<td>Ind</td>
+<td style="text-align: center">termino indivual</td>
+<td style="text-align: center">A</td>
+</tr>
+<tr>
+<td>Var</td>
+<td style="text-align: center">variable de cuantificación</td>
+<td style="text-align: center">x</td>
+</tr>
+<tr>
+<td>Fun1</td>
+<td style="text-align: center">función unaria</td>
+<td style="text-align: center">cuadrado (aritmética) e.g x^2</td>
+</tr>
+<tr>
+<td>Fun2</td>
+<td style="text-align: center">función binaria</td>
+<td style="text-align: center">suma (aritmética) e.g x+y</td>
+</tr>
+<tr>
+<td>Conj</td>
+<td style="text-align: center">conjunción</td>
+<td style="text-align: center">y, o</td>
+</tr>
+</tbody>
+</table>
+
+<p>Los constructores básicos de árboles abstractos, definidos en la gramática abstracta como funciones:</p>
+
+<table>
+<thead>
+<tr>
+<th>Funciones</th>
+<th style="text-align: center">Ejemplos</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>PAtom  : Atom  -&gt; Prop</td>
+<td style="text-align: center">A es cuadrado</td>
+</tr>
+<tr>
+<td>PNeg   : Prop  -&gt; Prop</td>
+<td style="text-align: center">no es el caso que A <strong>sea</strong> grande</td>
+</tr>
+<tr>
+<td>PConj  : Conj  -&gt; Prop -&gt; Prop -&gt; Prop</td>
+<td style="text-align: center">A es grande y A es rojo</td>
+</tr>
+<tr>
+<td>PImpl  : Prop  -&gt; Prop -&gt; Prop</td>
+<td style="text-align: center">si A es grande entonces A es rojo</td>
+</tr>
+<tr>
+<td>PUniv1  : Var -&gt; Prop -&gt; Prop</td>
+<td style="text-align: center">&lt; ∀x : : Rojo.x &gt;</td>
+</tr>
+<tr>
+<td>PExist1 : Var -&gt; Prop -&gt; Prop</td>
+<td style="text-align: center">&lt; ∃x : : Rojo.x &gt;</td>
+</tr>
+<tr>
+<td>PUniv2  : Var -&gt; Prop -&gt; Prop -&gt; Prop</td>
+<td style="text-align: center">&lt; ∀x : Tr.x : Rojo.x &gt;</td>
+</tr>
+<tr>
+<td>PExist2 : Var -&gt; Prop -&gt; Prop -&gt; Prop</td>
+<td style="text-align: center">&lt; ∃x : Tr.x : Rojo.x &gt;</td>
+</tr>
+<tr>
+<td>IVar   : Var -&gt; Ind</td>
+<td style="text-align: center">x</td>
+</tr>
+<tr>
+<td>APred1 : Pred1 -&gt; Ind -&gt; Atom</td>
+<td style="text-align: center">A es grande</td>
+</tr>
+<tr>
+<td>APred2 : Pred2 -&gt; Ind -&gt; Ind -&gt; Atom</td>
+<td style="text-align: center">A está arriba de B</td>
+</tr>
+<tr>
+<td>AEqual : Ind -&gt; Ind -&gt; AtomEqual</td>
+<td style="text-align: center">A is igual a B</td>
+</tr>
+<tr>
+<td>IFun1  : Fun1 -&gt; Ind -&gt; Ind</td>
+<td style="text-align: center">el cuadrado de x</td>
+</tr>
+<tr>
+<td>IFun2  : Fun2 -&gt; Ind -&gt; Ind -&gt; Ind</td>
+<td style="text-align: center">la sum de A y B</td>
+</tr>
+<tr>
+<td>VString : String -&gt; Var</td>
+<td style="text-align: center">x</td>
+</tr>
+<tr>
+<td>CAnd, COr : Conj</td>
+<td style="text-align: center">y, o</td>
+</tr>
+</tbody>
+</table>
+
+<p>Donde es importante notar lo siguiente:</p>
+
+<ul>
+<li>PUniv1 y PExist1 definen árboles abstractos para cuantificación con rango true.</li>
+<li>PUniv2 y PExist2 definen árboles abstractos para cuantificación con rango que dependa de alguna proposición.</li>
+<li>No se linealizan al castellano los árboles creados por PUniv ni PExist. solo se usarán para linealizar al lenguaje simbólico de lógica de primer orden.</li>
+<li>Las funciones que se usarán para parsear cuantificación de lenguaje natural son agregadas en la extensión.</li>
+</ul>
+
+<h4 id="toc_24">Extensión</h4>
+
+<p>Defino nuevas categorías y funciones que extienden las dadas anteriormente, que serán útiles para aceptar frases más naturales del español.</p>
+
+<p>Por el momento solo fueron añadidas:</p>
+
+<ul>
+<li>Negación de atómicas: ej: A no es grande</li>
+<li>Negación de igualdad: ej: A es distinto de B</li>
+<li>Cuantificación in-situ: ej: Todos los triangulos rojos son grandes. Sin embargo por ahora solo se puede parsear: &quot;Todas las figuras triangulares rojas son grandes&quot;. (Forma, color y tamaño son adjetivos modificadores de Figura).</li>
+</ul>
+
+<table>
+<thead>
+<tr>
+<th>Categoría</th>
+<th>Descripción</th>
+<th>Ejemplos</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Kind</td>
+<td>Dominio de cuantificación</td>
+<td>figura, figura triangular</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th>Funciones</th>
+<th>Ejemplos</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>PNegAtom: Atom -&gt; Prop</td>
+<td>A no es rojo</td>
+</tr>
+<tr>
+<td>PNegEqual : Ind -&gt; Ind -&gt; Prop</td>
+<td>A es distinto de B</td>
+</tr>
+<tr>
+<td>UnivIS: Var -&gt; Kind -&gt; Pred1 -&gt; Prop</td>
+<td>Cada figura roja es grande</td>
+</tr>
+<tr>
+<td>ExistIS : Var -&gt; Kind -&gt; Pred1 -&gt; Prop</td>
+<td>Alguna figura roja es grande</td>
+</tr>
+<tr>
+<td>ModKind : Kind -&gt; Pred1 -&gt; Kind</td>
+<td>Figura roja</td>
+</tr>
+</tbody>
+</table>
+
+<p>Nota: Pienso que debería quitar Var de UnivIS y ExistIS, y generar las variables nuevas al momento de traducir arboles generados por UnivIS, ExistIS a PUniv, PExist respectivamente.</p>
+
+<h4 id="toc_25">Lexicón</h4>
+
+<table>
+<thead>
+<tr>
+<th>Funciones</th>
+<th>Descripción</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Rojo, Azul, Verde : Pred1</td>
+<td>Color</td>
+</tr>
+<tr>
+<td>Chico, Mediano, Grande: Pred1</td>
+<td>Tamaño</td>
+</tr>
+<tr>
+<td>Triangulo, Cuadrado, Circulo : Pred1</td>
+<td>Forma</td>
+</tr>
+<tr>
+<td>Izquierda, Derecha, Arriba, Abajo : Pred2</td>
+<td>Posición</td>
+</tr>
+<tr>
+<td>Figura : Kind</td>
+<td>Elemento base</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="toc_26">Funciones de transformación</h4>
+
+<p>Son las encargadas de realizar una transformación de los árboles abstractos parseados en lenguaje natural.</p>
+
+<p>Hasta el momento se utilizan para mapear cuantificación in-situ a arboles generados por PUniv o PExist.
+Es necesario para ello transformar los árboles de tipo Kind a una conjunción de predicados.</p>
+
+<table>
+<thead>
+<tr>
+<th>Funciones</th>
+<th>Descripción</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>UnivIStoP : Prop -&gt; Prop</td>
+<td>Transformación de cuantificación universal in-situ a PUniv</td>
+</tr>
+<tr>
+<td>ExistIStoP : Prop -&gt; Prop</td>
+<td>Transformación de cuantificación existencial in-situ a PExist</td>
+</tr>
+<tr>
+<td>KindToProp : Kind -&gt; Var -&gt; Prop</td>
+<td>Transformación de Kind a conjunción de predicados</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="toc_27">Bibliografía</h2>
+
+<ol>
+<li><a href="http://www.grammaticalframework.org/">GF webpage</a></li>
+<li><a href="http://www.grammaticalframework.org/gf-book/">Libro: Grammatical Framework: Programming with Multilingual Grammars</a></li>
+<li><a href="http://www.grammaticalframework.org/doc/gf-lrec-2010.pdf">GF tutorial</a></li>
+<li><a href="https://www.youtube.com/watch?v=x1LFbDQhbso">Google Tech Talk, Aarne Ranta</a></li>
+<li><a href="https://www.semanticscholar.org/paper/Translating-between-Language-and-Logic-What-Is-Eas-Ranta/581281bb6292814ce285dc1de82a9785fdac2b5d">Paper: Translating between Language and Logic: What Is Easy and What Is Difficult, Aarne Ranta, CADE2011</a></li>
+<li><a href="http://www.grammaticalframework.org/%7Eaarne/cade-talk.pdf">Slides: Translating between Language and Logic: What Is Easy and What Is Difficult, Aarne Ranta, CADE2011</a></li>
+</ol>
+
+
+
+
+</body>
+
+</html>

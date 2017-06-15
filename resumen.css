@@ -1,0 +1,40 @@
+img[alt=compiler] { 
+    width: 50%;
+    height: 50%;
+}
+
+img[alt=java_compiler] { 
+    width: 50%;
+    height: 50%;
+}
+
+img[alt=complete_graph] { 
+    width: 60%;
+    height: 60%;
+}
+
+img[alt=n_to_1_graph] { 
+    width: 60%;
+    height: 60%;
+}
+
+img[alt=AST_john_loves_mary] { 
+    width: 30%;
+    height: 30%;
+}
+
+
+img[alt=parse_tree_english] { 
+    width: 30%;
+    height: 30%;
+}
+
+img[alt=parse_tree_latin] { 
+    width: 30%;
+    height: 30%;
+}
+
+img[alt=parse_tree_arabic] { 
+    width: 30%;
+    height: 30%;
+}
