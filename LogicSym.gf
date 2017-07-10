@@ -1,19 +1,13 @@
-concrete LogicSym of Logic =  open Prelude in {
+concrete LogicSym of Logic = CategoriesSym, LexiconSATSym ** open Prelude in {
 
 flags coding = utf8 ;
-
-lincat
-  Prop, Atom, AtomEqual, Pred1, Pred2, Var, Conj, Ind, Fun1, Fun2 = Str ;
 
 lin
   PAtom = idS ;
   PNeg p = negate p ;
   PConj conj p q = bin_op p conj q ;
   PImpl p q = bin_op p "⇒" q ;
-  PUniv1 v t = (glue "<∀" v) ++ ":" ++ ":" ++ t ++ ">" ;
-  PExist1 v t = (glue "<∃" v) ++ ":" ++ ":" ++ t ++ ">" ;
-  PUniv2 v r t = (glue "<∀" v) ++ ":" ++ r ++ ":" ++ t ++ ">" ;
-  PExist2 v r t = (glue "<∃" v) ++ ":" ++ r ++ ":" ++ t ++ ">" ;
+  PQuant q v r t = (glue (glue "〈" q) v) ++ ":" ++ r ++ ":" ++  t ++ "〉" ;
   APred1 f x = apply f x ;
   AEqual x y = equal x y ;
   APred2 f x y = apply (apply f x) y ;
@@ -28,18 +22,25 @@ lin
   CAnd = "∧" ;
   COr = "∨" ;
 
--- supplementary
+  True = "True" ;
+  False = "False" ;
+  ForAll = "∀" ;
+  Exists = "∃" ;
 
-lincat
-  Kind = Str ;
+-- extension con Kind
+
 lin
-  -- AKind k x = apply k x ;
   PNegAtom = negate ;
   PNegEqual x y = negate (parentesis (equal x y)) ;
-  -- ya no se linealizan los arboles UnivIS, ExistIS a lenguaje simbólico.
+  -- No se linealiza Kind a lenguaje simbólico
+  -- AKind k x = apply k x ;
+  -- ModKind k m = ;
+  -- No se linealizan los arboles UnivIS, ExistIS a lenguaje simbólico.
   -- UnivIS v k p = (glue "<∀" v) ++  ":" ++ k ++ ":" ++ glue (apply p v) ">" ;
   -- ExistIS v k p =  (glue "<∃" v) ++ ":" ++ k ++ ":" ++ glue (apply p v) ">" ;
-  -- ModKind k m = "modKind" ;
+
+-- extension conjunción polimórfica
+
 
 oper
     idS : Str -> Str = \s -> s ;
@@ -49,33 +50,4 @@ oper
     equal : Str -> Str -> Str = \x, y -> x ++ "=" ++ "y" ;
     bin_op : (s1, op, s2 : Str) -> Str = \s1, op, s2 -> parentesis (s1 ++ op ++ s2) ; 
 
-
--- test lexicon
-
-lin
-
-  -- Pred1
-
-  Chico = "Chico" ;
-  Mediano = "Mediano" ;
-  Grande = "Grande" ;
-
-  Rojo = "Rojo" ;
-  Verde = "Verde" ;
-  Azul = "Azul" ;
-
-  -- Kind
-  Circulo = "Circ" ;
-  Triangulo = "Tr" ;
-  Cuadrado = "Cuad" ;
-
-  -- Pred2
-  Izquierda = "izq" ;
-  Derecha = "der" ;
-  Arriba = "arriba" ;
-  Abajo = "abajo" ;
-
-  -- Kind
-  -- Ya no se linealizan los Kinds.
-  -- Figura = "" ;
 }

@@ -1,0 +1,43 @@
+Casos de ejemplo para traducir:
+
+Comando para traducir: echo "ejemplo" | ./trans Logic.pgf
+
+Conjunción de individuos:
+
+1)
+A y B son rojos
+(Rojo.A ∧ Rojo.B)
+
+2)
+A , B y C son rojos (Por el momento es necesario el espacio para la coma)
+(Rojo.A ∧ (Rojo.B ∧ Rojo.C))
+
+Conjunción de predicados unarios:
+3)
+A es rojo y chico
+(Rojo.A ∧ Chico.A)
+
+4)
+A es rojo, chico y cuadrado
+(Rojo.A ∧ (Chico.A ∧ Cuad.A))
+
+Conjunción de individuos con predicado unario negado:
+
+5)
+A y B no son rojos
+(¬Rojo.A ∧ ¬Rojo.B)
+
+6)
+A , B y C no son rojos
+(¬Rojo.A ∧ (Rojo.B ∧ Rojo.C))
+
+Conjunción de predicados unarios con negación:
+
+7)
+A no es rojo y chico
+¬(Rojo.A ∧ Chico.A)
+
+8)
+A no es rojo , chico y cuadrado 
+¬(Rojo.A ∧ (Chico.A ∧ Cuad.A))
+
