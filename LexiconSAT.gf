@@ -1,7 +1,7 @@
 abstract LexiconSAT = Categories ** {
 
-data Figura : Kind ;
-fun
+data 
+  Figura : Kind ;
   Rojo, Azul, Verde : Pred1 ;
   Chico, Mediano, Grande: Pred1 ;
   Triangulo, Cuadrado, Circulo : Pred1 ;

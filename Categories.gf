@@ -12,8 +12,8 @@ cat
   Conj ;  -- conjunction                      e.g. "and"
   Quant ;  -- quantification symbol           e.g. "∀"
   Kind ;  -- domain of quantification,        e.g. "even number"
-  -- [Prop] {2}  -- list of props (mn 2)
   [Var] {1} ;    -- list of vars (min 1)
   [Ind] {2} ;    -- list of individuals (min 2)
   [Pred1] {2} ;  -- list of unary preds (min 2)
+  -- [Prop] {2} ;  -- list of props (mn 2)
 }

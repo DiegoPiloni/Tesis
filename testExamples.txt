@@ -1,43 +1,124 @@
 Casos de ejemplo para traducir:
 
+——
+En GF:
+p -lang=Spa -tr “ejemplo” | pt -tr -transfer=PropPreds | l -bind -lang=Sym
+
+En Haskell:
 Comando para traducir: echo "ejemplo" | ./trans Logic.pgf
+—-
 
 Conjunción de individuos:
 
 1)
+Frase:
 A y B son rojos
+
+AST (Original): 
+PAtom (APred1 Rojo (ConjInd CAnd (BaseInd (IVar (VString "A")) (IVar (VString "B")))))
+
+AST (Transformación del original): 
+PConj CAnd (PAtom (APred1 Rojo (IVar (VString "A")))) (PAtom (APred1 Rojo (IVar (VString "B"))))
+
+Fórmula:
 (Rojo.A ∧ Rojo.B)
 
 2)
+Frase:
 A , B y C son rojos (Por el momento es necesario el espacio para la coma)
-(Rojo.A ∧ (Rojo.B ∧ Rojo.C))
+
+AST (Original):
+PAtom (APred1 Rojo (ConjInd CAnd (ConsInd (IVar (VString "A")) (BaseInd (IVar (VString "B")) (IVar (VString "C"))))))
+
+AST (Transformación del original): 
+PConj CAnd (PAtom (APred1 Rojo (IVar (VString "A")))) (PConj CAnd (PAtom (APred1 Rojo (IVar (VString "B")))) (PAtom (APred1 Rojo (IVar (VString "C")))))
+
+Fórmula:
+(Rojo.A ∧ (Rojo.B ∧ Rojo.C)) 
+
 
 Conjunción de predicados unarios:
 3)
+Frase:
 A es rojo y chico
+
+AST (Original):
+PAtom (APred1 (ConjPred1 CAnd (BasePred1 Rojo Chico)) (IVar (VString "A")))
+
+AST (Transformación del original): 
+PConj CAnd (PAtom (APred1 Rojo (IVar (VString "A")))) (PAtom (APred1 Chico (IVar (VString "A"))))
+
+Fórmula:
 (Rojo.A ∧ Chico.A)
 
+
 4)
-A es rojo, chico y cuadrado
+Frase:
+A es rojo , chico y cuadrado
+
+AST (Original):
+PAtom (APred1 (ConjPred1 CAnd (ConsPred1 Rojo (BasePred1 Chico Cuadrado))) (IVar (VString "A")))
+
+AST (Transformación del original): 
+PConj CAnd (PAtom (APred1 Rojo (IVar (VString "A")))) (PConj CAnd (PAtom (APred1 Chico (IVar (VString "A")))) (PAtom (APred1 Cuadrado (IVar (VString "A")))))
+
+Fórmula:
 (Rojo.A ∧ (Chico.A ∧ Cuad.A))
+
 
 Conjunción de individuos con predicado unario negado:
 
 5)
+Frase:
 A y B no son rojos
+
+AST (Original):
+PNegAtom (APred1 Rojo (ConjInd CAnd (BaseInd (IVar (VString "A")) (IVar (VString "B")))))
+
+AST (Transformación del original): 
+PConj CAnd (PNegAtom (APred1 Rojo (IVar (VString "A")))) (PNegAtom (APred1 Rojo (IVar (VString "B"))))
+
+Fórmula:
 (¬Rojo.A ∧ ¬Rojo.B)
 
 6)
+Frase:
 A , B y C no son rojos
-(¬Rojo.A ∧ (Rojo.B ∧ Rojo.C))
+
+AST (Original):
+PNegAtom (APred1 Rojo (ConjInd CAnd (ConsInd (IVar (VString "A")) (BaseInd (IVar (VString "B")) (IVar (VString "C"))))))
+
+AST (Transformación del original):
+PConj CAnd (PNegAtom (APred1 Rojo (IVar (VString "A")))) (PConj CAnd (PNegAtom (APred1 Rojo (IVar (VString "B")))) (PNegAtom (APred1 Rojo (IVar (VString "C")))))
+
+Fórmula:
+(¬Rojo.A ∧ (¬Rojo.B ∧ ¬Rojo.C))
 
 Conjunción de predicados unarios con negación:
 
 7)
+Frase:
 A no es rojo y chico
+
+AST (Original):
+PNegAtom (APred1 (ConjPred1 CAnd (BasePred1 Rojo Chico)) (IVar (VString "A")))
+
+AST (Transformación del original):
+PNeg (PConj CAnd (PAtom (APred1 Rojo (IVar (VString "A")))) (PAtom (APred1 Chico (IVar (VString "A")))))
+
+Fórmula:
 ¬(Rojo.A ∧ Chico.A)
 
 8)
+Frase:
 A no es rojo , chico y cuadrado 
+
+AST (Original):
+PNegAtom (APred1 (ConjPred1 CAnd (ConsPred1 Rojo (BasePred1 Chico Cuadrado))) (IVar (VString "A")))
+
+AST (Transformación del original): 
+PNeg (PConj CAnd (PAtom (APred1 Rojo (IVar (VString "A")))) (PConj CAnd (PAtom (APred1 Chico (IVar (VString "A")))) (PAtom (APred1 Cuadrado (IVar (VString "A"))))))
+
+Fórmula:
 ¬(Rojo.A ∧ (Chico.A ∧ Cuad.A))
 

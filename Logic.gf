@@ -46,35 +46,49 @@ data
 
 -- transfer functions for quantification
 {-
-fun UnivIStoP : Prop -> Prop ;
-fun ExistIStoP : Prop -> Prop ;
+fun QuantIStoP : Prop -> Prop ;
 fun KindToProp : Kind -> Var -> Prop ;
 
-def UnivIStoP (UnivIS v Figura p) = PQuant ForAll v True (PAtom (APred1 p (IVar v))) ;  
-def UnivIStoP (UnivIS v k p) = PQuant ForAll v (KindToProp k v) (PAtom (APred1 p (IVar v))) ;
+def
+  QuantIStoP (UnivIS v Figura p) = PQuant ForAll v True (PAtom (APred1 p (IVar v))) ;  
+  QuantIStoP (UnivIS v k p) = PQuant ForAll v (KindToProp k v) (PAtom (APred1 p (IVar v))) ;
 
-def ExistIStoP (ExistIS v Figura p) = PQuant Exists v True (PAtom (APred1 p (IVar v))) ;  
-def ExistIStoP (ExistIS v k p) = PQuant Exists v (KindToProp k v) (PAtom (APred1 p (IVar v))) ;
+  QuantIStoP (ExistIS v Figura p) = PQuant Exists v True (PAtom (APred1 p (IVar v))) ;  
+  QuantIStoP (ExistIS v k p) = PQuant Exists v (KindToProp k v) (PAtom (APred1 p (IVar v))) ;
 
-def KindToProp (ModKind Figura pred) v = (PAtom (APred1 pred (IVar v))) ;
-def KindToProp (ModKind k pred) v = PConj CAnd (PAtom (APred1 pred (IVar v))) (KindToProp k v) ;
+  KindToProp (ModKind Figura pred) v = (PAtom (APred1 pred (IVar v))) ;
+  KindToProp (ModKind k pred) v = PConj CAnd (PAtom (APred1 pred (IVar v))) (KindToProp k v) ;
 -}
 
 -- suplementary. polimorfic conjunctions
 
 data
-  -- PConjs : Conj -> [Prop] -> Prop ;
-  -- PQuants : Quant -> [Var] -> Prop -> Prop -> Prop ;
   ConjPred1 : Conj -> [Pred1] -> Pred1 ;
   ConjInd : Conj -> [Ind] -> Ind ;
+  -- PConjs : Conj -> [Prop] -> Prop ;
+  -- PQuants : Quant -> [Var] -> Prop -> Prop -> Prop ;
 
 -- transfer functions for list of preds and list of inds
+
 {-
 fun PropPreds : Prop -> Prop ;
 
-def PropPreds (PAtom (APred1 p (ConjInd c (BaseInd i1 i2)))) = PConj c (PAtom (APred1 p i1)) (PAtom (APred1 p i2)) ;
-def PropPreds (PAtom (APred1 p (ConjInd c (ConsInd i1 li)))) = PConj c (PAtom (APred1 p i1)) (PropPreds (PAtom (APred1 p (ConjInd c li)))) ;
-def PropPreds (PAtom (APred1 (ConjPred1 c (BasePred1 p1 p2)) i)) = PConj c (PAtom (APred1 p1 i)) (PAtom (APred1 p2 i)) ;
-def PropPreds (PAtom (APred1 (ConjPred1 c (ConsPred1 p1 lp)) i)) = PConj c (PAtom (APred1 p1 i)) (PropPreds (PAtom (APred1 (ConjPred1 c lp) i))) ;
+def 
+  -- conj de individuos
+  PropPreds (PAtom (APred1 p (ConjInd c (BaseInd i1 i2)))) = PConj c (PropPreds (PAtom (APred1 p i1))) (PropPreds (PAtom (APred1 p i2))) ;
+  PropPreds (PAtom (APred1 p (ConjInd c (ConsInd i1 li)))) = PConj c (PropPreds (PAtom (APred1 p i1))) (PropPreds (PAtom (APred1 p (ConjInd c li) ))) ;
+  PropPreds (PNegAtom (APred1 p (ConjInd c (BaseInd i1 i2)))) = PConj c (PropPreds (PNegAtom (APred1 p i1))) (PropPreds (PNegAtom (APred1 p i2))) ;
+  PropPreds (PNegAtom (APred1 p (ConjInd c (ConsInd i1 li)))) = PConj c (PropPreds (PNegAtom (APred1 p i1))) (PropPreds (PNegAtom (APred1 p (ConjInd c li)))) ;
+
+  -- conj de predicados unarios
+  PropPreds (PAtom (APred1 (ConjPred1 c (BasePred1 p1 p2)) i)) = PConj c (PropPreds (PAtom (APred1 p1 i))) (PropPreds (PAtom (APred1 p2 i))) ;
+  PropPreds (PAtom (APred1 (ConjPred1 c (ConsPred1 p1 lp)) i)) = PConj c (PropPreds (PAtom (APred1 p1 i))) (PropPreds (PAtom (APred1 (ConjPred1 c lp) i))) ; 
+  PropPreds (PNegAtom (APred1 (ConjPred1 c (BasePred1 p1 p2)) i)) = PNeg (PConj c (PropPreds (PAtom (APred1 p1 i))) (PropPreds (PAtom (APred1 p2 i)))) ;
+  PropPreds (PNegAtom (APred1 (ConjPred1 c (ConsPred1 p1 lp)) i)) = PNeg (PConj c (PropPreds (PAtom (APred1 p1 i))) (PropPreds (PAtom (APred1 (ConjPred1 c lp) i)))) ;  
+
+  -- otherwise  
+  PropPreds (PAtom a) = (PAtom a) ;
+  PropPreds (PNegAtom a) = (PNegAtom a) ;
 -}
+
 }

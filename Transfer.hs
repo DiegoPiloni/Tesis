@@ -28,18 +28,15 @@ module Transfer where
     kindToProp (GModKind k pred) v = GPConj GCAnd (GPAtom (GAPred1 pred (GIVar v))) (kindToProp k v)
 
     propPreds :: GProp -> GProp
-    -- cuidado cuando los sub predicados son ConjPred1 !!! (Ejemplo A es rojo y chico y cuadrado)
-    propPreds (GPAtom (GAPred1 p (GConjInd c (GListInd [i1, i2])))) = GPConj c (GPAtom (GAPred1 p i1)) (GPAtom (GAPred1 p i2))
-    propPreds (GPAtom (GAPred1 p (GConjInd c (GListInd (i1:li)) ))) = GPConj c (GPAtom (GAPred1 p i1)) (propPreds (GPAtom (GAPred1 p (GConjInd c (GListInd li) ))))
-    
-    propPreds (GPAtom (GAPred1 (GConjPred1 c (GListPred1 [p1,p2])) i)) = GPConj c (GPAtom (GAPred1 p1 i)) (GPAtom (GAPred1 p2 i))
-    propPreds (GPAtom (GAPred1 (GConjPred1 c (GListPred1 (p1:lp)) ) i)) = GPConj c (GPAtom (GAPred1 p1 i)) (propPreds (GPAtom (GAPred1 (GConjPred1 c (GListPred1 lp) ) i)))
-    
-    -- cuidado cuando los sub predicados son ConjPred1 !!! (Ejemplo A es rojo y chico y cuadrado)
-    propPreds (GPNegAtom (GAPred1 p (GConjInd c (GListInd [i1, i2])))) = (GPConj c (GPNegAtom (GAPred1 p i1)) (GPNegAtom (GAPred1 p i2)))
-    propPreds (GPNegAtom (GAPred1 p (GConjInd c (GListInd (i1:li)) ))) = (GPConj c (GPNegAtom (GAPred1 p i1)) (propPreds (GPAtom (GAPred1 p (GConjInd c (GListInd li) )))))
-    
-    propPreds (GPNegAtom (GAPred1 (GConjPred1 c (GListPred1 [p1,p2])) i)) = GPNeg (GPConj c (GPAtom (GAPred1 p1 i)) (GPAtom (GAPred1 p2 i)))
-    propPreds (GPNegAtom (GAPred1 (GConjPred1 c (GListPred1 (p1:lp)) ) i)) = GPNeg (GPConj c (GPAtom (GAPred1 p1 i)) (propPreds (GPAtom (GAPred1 (GConjPred1 c (GListPred1 lp) ) i))))
-
+    -- conj de individuos
+    propPreds (GPAtom (GAPred1 p (GConjInd c (GListInd [i1, i2])))) = GPConj c (propPreds (GPAtom (GAPred1 p i1))) (propPreds (GPAtom (GAPred1 p i2)))
+    propPreds (GPAtom (GAPred1 p (GConjInd c (GListInd (i1:li)) ))) = GPConj c (propPreds (GPAtom (GAPred1 p i1))) (propPreds (GPAtom (GAPred1 p (GConjInd c (GListInd li) ))))
+    propPreds (GPNegAtom (GAPred1 p (GConjInd c (GListInd [i1, i2])))) = (GPConj c (propPreds (GPNegAtom (GAPred1 p i1))) (propPreds (GPNegAtom (GAPred1 p i2))))
+    propPreds (GPNegAtom (GAPred1 p (GConjInd c (GListInd (i1:li)) ))) = (GPConj c (propPreds (GPNegAtom (GAPred1 p i1))) (propPreds (GPNegAtom (GAPred1 p (GConjInd c (GListInd li) )))))
+    -- conj de predicados unarios
+    propPreds (GPAtom (GAPred1 (GConjPred1 c (GListPred1 [p1,p2])) i)) = GPConj c (propPreds (GPAtom (GAPred1 p1 i))) (propPreds (GPAtom (GAPred1 p2 i)))
+    propPreds (GPAtom (GAPred1 (GConjPred1 c (GListPred1 (p1:lp)) ) i)) = GPConj c (propPreds (GPAtom (GAPred1 p1 i))) (propPreds (GPAtom (GAPred1 (GConjPred1 c (GListPred1 lp) ) i)))
+    propPreds (GPNegAtom (GAPred1 (GConjPred1 c (GListPred1 [p1,p2])) i)) = GPNeg (GPConj c (propPreds (GPAtom (GAPred1 p1 i))) (propPreds (GPAtom (GAPred1 p2 i))))
+    propPreds (GPNegAtom (GAPred1 (GConjPred1 c (GListPred1 (p1:lp)) ) i)) = GPNeg (GPConj c (propPreds (GPAtom (GAPred1 p1 i))) (propPreds (GPAtom (GAPred1 (GConjPred1 c (GListPred1 lp) ) i))))
+    -- otherwise
     propPreds p = p
