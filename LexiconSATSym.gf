@@ -5,25 +5,32 @@ concrete LexiconSATSym of LexiconSAT = CategoriesSym ** {
 lin
 
   -- Pred1
-  Chico = "Chico" ;
-  Mediano = "Mediano" ;
-  Grande = "Grande" ;
+  Chico = pred1_original "Chico" ;
+  Mediano = pred1_original "Mediano" ;
+  Grande = pred1_original "Grande" ;
 
-  Rojo = "Rojo" ;
-  Verde = "Verde" ;
-  Azul = "Azul" ;
+  Rojo = pred1_original "Rojo" ;
+  Verde = pred1_original "Verde" ;
+  Azul = pred1_original "Azul" ;
+
+  Circulo = pred1_original "Circ" ;
+  Triangulo = pred1_original "Tr" ;
+  Cuadrado = pred1_original "Cuad" ;
+  
+  -- Pred2
+  Izquierda = pred2_position "izq" ;
+  Derecha = pred2_position "der" ;
+  Arriba = pred2_position "arriba" ;
+  Abajo = pred2_position "abajo" ;
+
+  -- ind vacio, solo se usa si es aplicacion parcial. Mejor solución?
+  oper pred1_original : Str -> { t : Pred1Type ; symb : Str ; ind : Str } = 
+       \symbol -> { t = Original ; symb = symbol ; ind = "" } ;
+
+  oper pred2_position : Str -> { t : Pred2Type ; s : Str } = 
+       \symbol -> {t = Position ; s = symbol } ;
 
   -- Kind
-  Circulo = "Circ" ;
-  Triangulo = "Tr" ;
-  Cuadrado = "Cuad" ;
-
-  -- Pred2
-  Izquierda = "izq" ;
-  Derecha = "der" ;
-  Arriba = "arriba" ;
-  Abajo = "abajo" ;
-
   -- No se linealizan los Kinds.
 
 }

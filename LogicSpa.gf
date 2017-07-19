@@ -24,19 +24,28 @@ lin
   PImpl p q = mkS (mkAdv if_Subj p) (mkS then_Adv q) ;
 
   -- Predicado unario como proposición atómica
-  APred1 f x = mkCl x f ;
+  APred1 p x = case p.t of {
+                 Position1 => mkCl x (E.UseComp_estar (mkComp p.s)) ;
+                 _ => mkCl x p.s
+               } ;
 
   -- Predicados binarios como proposicies atómicas
-  APred2 f x y = mkCl x (E.UseComp_estar (mkComp (mkAP f y))) ;  -- no está bueno si quiero hacerlo parametrico en la signatura
-  AEqual x y = mkCl x equal_A2 y ;
+  APred2 p x y = case p.t of {
+                   Position => mkCl x (E.UseComp_estar (mkComp (mkAP p.s y))) ;
+                   _ => mkCl x p.s y
+                 } ;
  
-  -- ya no se puede pueden parsear frases de la forma "para todo x, x es rojo".
+  -- no se parsean frases de la forma "para todo x, x es rojo".
   -- PUniv v p = mkS (mkAdv for_Prep (mkNP all_Predet (mkNP (SymbPN v)))) p ;
   -- PExist v p = 
   --  mkS (mkCl (mkNP a_Quant (mkCN (mkCN element_N (mkNP (SymbPN v))) 
   --    (mkAP (mkAP such_A) p)))) ;
 
   IVar x = mkNP (SymbPN x) ;
+
+  Equal = { t = Equality ; s = P.mkA2 (P.mkA "igual") to_Prep } ;
+  Different = { t = Inequality ; s = P.mkA2 (P.mkA ("diferente" | "distinto")) part_Prep } ;
+
 
   IFun1 f = app f ; 
   IFun2 f = app f ; 
@@ -51,10 +60,22 @@ lin
 lin
   -- AKind k x = mkCl x k ;
   PNegAtom = mkS negativePol ;
-  PNegEqual x y = mkS (mkCl x diff_A2 y) ;
-  UnivIS v k p = mkS (mkCl (mkNP every_Det k) p) ;
-  ExistIS v k p = mkS (mkCl (mkNP someSg_Det k) p) ;
-  ModKind k m = mkCN m k ;
+  PartPred p i = {t = pred1_param p.t ; s = mkAP p.s i } ;
+  APredRefl p i = case p.t of {
+                    Position => mkCl i (E.UseComp_estar (mkComp (reflAP p.s))) ;
+                    _ => mkCl i (reflAP p.s)
+                  } ;
+
+  UnivIS v k p = case p.t of {
+                   Position1 => mkS (mkCl (mkNP every_Det k) (E.UseComp_estar (mkComp p.s))) ;
+                   _ => mkS (mkCl (mkNP every_Det k) p.s)
+                 } ;
+  ExistIS v k p = case p.t of {
+                    Position1 => mkS (mkCl (mkNP someSg_Det k) (E.UseComp_estar (mkComp p.s))) ;
+                    _ => mkS (mkCl (mkNP someSg_Det k) p.s)
+                  } ; 
+
+  ModKind k m = mkCN m.s k ;
 
 -- extension conjunción polimórfica
 lin
@@ -69,15 +90,21 @@ lin
   BaseInd = mkListNP ;
   ConsInd = mkListNP ;
 
-  BasePred1 = mkListAP ;
-  ConsPred1 = mkListAP ;
+  BasePred1 p1 p2 = mkListAP p1.s p2.s ;
+  ConsPred1 p lp = mkListAP p.s lp ;
 
-  ConjPred1 = mkAP ;
+  ConjPred1 c lp = { t = Original ; s = mkAP c lp } ;
   ConjInd = mkNP ;
 
 
 oper
   mkFun1, mkFun2 : Str -> N2 = \s -> P.mkN2 (P.mkN s) part_Prep ;
+  pred1_param : Pred2Type -> Pred1Type = 
+      \p2type -> case p2type of {
+                  Position => Position1 ;
+                  Equality => Equality1 ;
+                  Inequality => Inequality1
+                } ;
 
 -- structural words
 
@@ -86,7 +113,4 @@ oper
   such_A = P.mkA "tal" ;
   then_Adv = P.mkAdv "entonces" ;
   element_N = P.mkN "elemento" ;
-  equal_A2 = P.mkA2 (P.mkA "igual") to_Prep ;
-  diff_A2 = P.mkA2 (P.mkA ("diferente" | "distinto")) part_Prep ;
-
 }

@@ -2,12 +2,14 @@ concrete CategoriesSpa of Categories = open
   SyntaxSpa, 
   SymbolSpa in {
 
+param Pred2Type = Equality | Inequality | Position ;
+param Pred1Type = Original | Equality1 | Inequality1 | Position1 ;
+
 lincat
   Prop = S ;
   Atom = Cl ;
-  AtomEqual = Cl ;
-  Pred1 = AP ;
-  Pred2 = A2 ;
+  Pred1 = { t : Pred1Type ; s : AP } ;
+  Pred2 = { t : Pred2Type ; s : A2 } ;
   Var = Symb ;
   Conj = SyntaxSpa.Conj ;
   Ind = NP ;

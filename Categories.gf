@@ -2,7 +2,6 @@ abstract Categories = {
 cat
   Prop ;  -- proposition, complex or atomic   e.g. "0 is even and 1 is odd"
   Atom ;  -- atomic proposition               e.g. "0 is even"
-  AtomEqual ; -- atomic equality              e.g. "A is equal to B"
   Pred1 ; -- one-place predicate              e.g. "even"
   Pred2 ; -- two-place predicate              e.g. "A is less than B"
   Ind ;   -- individual term                  e.g. "the square of x"

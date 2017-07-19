@@ -1,0 +1,99 @@
+Fecha: 19/07/17
+
+* Empiezo a escribir en este archivo los cambios y nuevas 
+funcionalidades del proyecto.
+
+
+* Reordené (y a mi criterio mejoré) la forma de tratar con 
+igualdad/desigualdad de invididuos.
+Ahora la igualdad (Equal en Logic.gf) y la diferencia (Different en Logic.gf), 
+tratada como un caso adicional, son predicados binarios (Pred2).
+La diferencia es tratada aparte para poder escribir frases como "A es distinto de B".
+Sin esta separación la única forma de expresar esto sería mediante la frase: 
+"A no es igual a B" (como negación de sentencias atómicas).
+
+
+* Implementé la aplicación parcial de predicados binarios. 
+    (PartPred : Pred2 -> Ind -> Pred1, en Logic.gf)
+Esta nueva funcionalidad requirió, en primer medida, modificar 
+las categorías en la sintaxis concreta (lincat) de Pred1 y Pred2.
+La forma en que implementé esto es usando records y parámetros, 
+que serán los que definirán el tipo de predicado y haciendo casos 
+(comando "case") en Logic(Spa | Sym).gf para manipular los regristros 
+de manera adecuada.
+
+Los parámetros usados son:
+  - param Pred2Type = Equality | Inequality | Position ;
+  - param Pred1Type = Original | Equality1 | Inequality1 | Position1 ;
+  ( No está muy elegante esto, ya voy a ver si hay una forma mejor de hacerlo)
+
+y en el caso de la sintaxis del lenguaje simbólico, los tipos de registros:
+  - Pred1 = { t : Pred1Type ; symb : Str ; ind : Str } ;
+  Donde se guarda el tipo del predicado (original o proveniente de una aplicación parcial),
+  el símbolo del predicado y el individuo que se propaga en caso de ser una aplicación parcial.
+  (Notar que en el caso que Pred1Type sea Original, ind no tiene utilidad. 
+  Buscar mejor forma de resolver esto!)
+  
+  - Pred2 = { t : Pred2Type ; s : Str } ;
+(Para más detalle ver Categories(Spa | Sym).gf y Logic(Spa | Sym).gf)
+
+La aplicación parcial permite frases como las siguientes:
+> Aplicación parcial en el término de cuantificación:
+    - "Cada figura roja está a la izquierda de B"
+    Donde "a la izquierda de B" se parsea como un predicado unario, creado a partir de la aplicación 
+    parcial del Pred2 Izquierda con el Ind "B".
+    De la misma manera otras frases como:
+    - "cada figura roja es igual a B"
+    - "cada figura roja es diferente de B"
+> Aplicación parcial en el rango de cuantificación:
+    - "cada figura arriba de B es roja"
+    (Hasta el momento es la única manera de escribir esto. creo que estaría bueno también poder escribir
+    frases como "cada figura que está arriba de B es roja", es decir, agregando "que está").
+    De la misma manera otras frases como:
+    - "alguna figura arriba de B es grande"
+    - "cada figura diferente de B es roja"
+    - "cada figura distinta de B está arriba de B" (aplicación parcial en rango y término)
+
+Notar que ahora frases como: "A está arriba de B", pueden ser interpretadas como la aplicación normal
+de un predicado binario, o como la aplicación del predicado unario generado a partir de la aplicación parcial ("arriba de b").
+
+
+* Función de transferencia PropPreds ampliada, para conjunción 
+de individuos en Pred2 y en aplicación parcial.
+
+Sobre Pred2:
+Hago algunas suposiciones que creo correctas: (Espero su devolución sobre esto)
+
+La frase:
+    "A no está arriba de B y C"
+se traduce a:
+    ¬(arriba.A.B ∧ arriba.A.C)
+Mientras que:
+    "A y B no están arriba de C"
+se traduce a:
+    (¬arriba.A.C ∧ ¬arriba.B.C)
+
+(Ver PropPreds en Logic.gf para ver todos los casos.)
+
+
+* Agregué APredRefl : Pred2 -> Ind -> Atom, para escribir frases donde los individuos aplicados
+al predicado binario sean el mismo.
+Se aceptan frases como:
+    "A es igual a sí" (Estaría bueno agregar "igual a sí mismo" ?)
+    "A no está arriba de sí"
+
+Notar que APredRefl genera dos interpretaciones posibles:
+    "A es igual a sí"
+traduce a:
+    "(A = A)"
+    "(A = sí)"
+La solución a esto debería ir de la mano con que en SAT solo mayúsculas son nombres de constantes.
+
+
+* Pendiente: Distribuir predicado binario a una lista de individuos.
+Frases que agregaría esto:
+    "A, B y C son iguales"
+    "A, B y C son distintos"
+Pensamiento:
+    Predicados "posicionales", como estar arriba de, no deberían poder ser
+    "distribuídos".
