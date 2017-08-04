@@ -3,7 +3,7 @@ concrete CategoriesSpa of Categories = open
   SymbolSpa in {
 
 param Pred2Type = Equality | Inequality | Position ;
-param Pred1Type = Original | Equality1 | Inequality1 | Position1 ;
+param Pred1Type = Original | PA Pred2Type ;
 
 lincat
   Prop = S ;
@@ -16,8 +16,9 @@ lincat
   Fun1 = N2 ;
   Fun2 = N2 ;
   Kind = CN ;
-  -- [Prop] = [S] ;
+  [Prop] = [S] ;
   [Pred1] = [AP] ;
   [Ind] = [NP] ;
   [Var] = NP ;
+  Distr = {} ;
 }

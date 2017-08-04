@@ -2,8 +2,7 @@ Casos de ejemplo para traducir:
 
 ——
 En GF:
-p -lang=Spa -tr “ejemplo” | pt -tr -transfer=PropPreds | l -bind -lang=Sym
-
+p -tr -lang=Spa "ejemplo" | pt -tr -transfer=Transfer |  l -bind -lang=Sym
 En Haskell:
 Comando para traducir: echo "ejemplo" | ./trans Logic.pgf
 —-
@@ -122,3 +121,50 @@ PNeg (PConj CAnd (PAtom (APred1 Rojo (IVar (VString "A")))) (PConj CAnd (PAtom (
 Fórmula:
 ¬(Rojo.A ∧ (Chico.A ∧ Cuad.A))
 
+
+Lista de sentencias:
+
+9)
+Frase:
+A es rojo, B es azul y C es verde
+
+AST (Original):
+PConjs CAnd (ConsProp (PAtom (APred1 Rojo (IVar (VString "A")))) (BaseProp (PAtom (APred1 Azul (IVar (VString "B")))) (PAtom (APred1 Verde (IVar (VString "C"))))))
+
+AST (Transformación del original):
+PConj CAnd (PAtom (APred1 Rojo (IVar (VString "A")))) (PConj CAnd (PAtom (APred1 Azul (IVar (VString "B")))) (PAtom (APred1 Verde (IVar (VString "C")))))
+
+Fórmula:
+(Rojo.A ∧ (Azul.B ∧ Verde.C))
+
+
+Aplicación parcial en rango de cuantificación:
+
+10)
+Frase:
+alguna figura arriba de A es azul
+
+AST (Original):
+ExistIS ?1 (ModKind Figura (PartPred Arriba (IVar (VString "A")))) Azul
+
+AST (Transformación del original):
+PQuant Exists ?1 (PAtom (APred1 (PartPred Arriba (IVar (VString "A"))) (IVar ?1))) (PAtom (APred1 Azul (IVar ?1)))
+
+Fórmula:
+〈∃?1 : arriba.?1.A : Azul.?1 〉
+
+
+Aplicación parcial en término de cuantificación:
+
+11)
+Frase:
+alguna figura roja está arriba de A
+
+AST (Original):
+ExistIS ?1 (ModKind Figura Rojo) (PartPred Arriba (IVar (VString "A")))
+
+AST (Transformación del original);
+PQuant Exists ?1 (PAtom (APred1 Rojo (IVar ?1))) (PAtom (APred1 (PartPred Arriba (IVar (VString "A"))) (IVar ?1)))
+
+Fórmula:
+〈∃?1 : Rojo.?1 : arriba.?1.A 〉

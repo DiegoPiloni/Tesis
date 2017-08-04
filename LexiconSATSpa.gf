@@ -19,15 +19,15 @@ lin
   Cuadrado = pred1_original (mkAP (P.mkA "cuadrado")) ;
   Circulo = pred1_original (mkAP (P.mkA "circular")) ;
 
-
-  -- Kind
-  Figura = mkCN (P.mkN "figura") ;
-
   -- Pred2
   Izquierda = pred2_position (P.mkA2 (P.mkA "a la izquierda" "a la izquierda" "a la izquierda" "a la izquierda" "a la izquierda") part_Prep) ;
   Derecha = pred2_position (P.mkA2 (P.mkA "a la derecha" "a la derecha" "a la derecha" "a la derecha" "a la derecha" ) part_Prep) ;
   Abajo = pred2_position (P.mkA2 (P.mkA "abajo" "abajo" "abajo" "abajo" "abajo") part_Prep) ;
   Arriba = pred2_position (P.mkA2 (P.mkA "arriba" "arriba" "arriba" "arriba" "arriba") part_Prep) ;
+           
+  -- Kind
+  Figura = mkCN (P.mkN "figura") ;
+
 
   oper pred1_original : AP -> {t : Pred1Type ; s : AP } = 
        \ap -> { t = Original ; s = ap } ;

@@ -25,7 +25,7 @@ lin
 
   -- Predicado unario como proposición atómica
   APred1 p x = case p.t of {
-                 Position1 => mkCl x (E.UseComp_estar (mkComp p.s)) ;
+                 (PA Position) => mkCl x (E.UseComp_estar (mkComp p.s)) ;
                  _ => mkCl x p.s
                } ;
 
@@ -60,29 +60,32 @@ lin
 lin
   -- AKind k x = mkCl x k ;
   PNegAtom = mkS negativePol ;
-  PartPred p i = {t = pred1_param p.t ; s = mkAP p.s i } ;
+  PartPred p i = {t = PA p.t ; s = mkAP p.s i } ;
   APredRefl p i = case p.t of {
                     Position => mkCl i (E.UseComp_estar (mkComp (reflAP p.s))) ;
                     _ => mkCl i (reflAP p.s)
                   } ;
+  
+  APred2Distr p _ inds = mkCl (mkNP and_Conj inds) (mkAP p.s) ;  
 
   UnivIS v k p = case p.t of {
-                   Position1 => mkS (mkCl (mkNP every_Det k) (E.UseComp_estar (mkComp p.s))) ;
+                   (PA Position) => mkS (mkCl (mkNP every_Det k) (E.UseComp_estar (mkComp p.s))) ;
                    _ => mkS (mkCl (mkNP every_Det k) p.s)
                  } ;
   ExistIS v k p = case p.t of {
-                    Position1 => mkS (mkCl (mkNP someSg_Det k) (E.UseComp_estar (mkComp p.s))) ;
+                    (PA Position) => mkS (mkCl (mkNP someSg_Det k) (E.UseComp_estar (mkComp p.s))) ;
                     _ => mkS (mkCl (mkNP someSg_Det k) p.s)
                   } ; 
 
   ModKind k m = mkCN m.s k ;
-
+  
 -- extension conjunción polimórfica
 lin
-  -- PConjs = mkS ;
 
-  -- BaseProp = mkListS ;
-  -- ConsProp = mkListS ;
+  PConjs = mkS ;
+  
+  BaseProp = mkListS ;
+  ConsProp = mkListS ;
 
   -- BaseVar x = mkNP (SymbPN x) ;
   -- ConsVar x xs = mkNP and_Conj (mkListNP (mkNP (SymbPN x)) xs) ;
@@ -99,12 +102,6 @@ lin
 
 oper
   mkFun1, mkFun2 : Str -> N2 = \s -> P.mkN2 (P.mkN s) part_Prep ;
-  pred1_param : Pred2Type -> Pred1Type = 
-      \p2type -> case p2type of {
-                  Position => Position1 ;
-                  Equality => Equality1 ;
-                  Inequality => Inequality1
-                } ;
 
 -- structural words
 

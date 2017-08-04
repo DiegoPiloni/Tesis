@@ -97,3 +97,132 @@ Frases que agregaría esto:
 Pensamiento:
     Predicados "posicionales", como estar arriba de, no deberían poder ser
     "distribuídos".
+
+Fecha: 24/07/17
+
+* Empecé a implementar la distribución de predicados binarios a lista de individuos.
+Uso tipos dependientes para poder seleccionar los predicados que distribuyen y los que no.
+Ver categoría (Distr Pred2) y funciones (distr_equal, distr_diff).
+
+Nota: El parser no completa el arbol. (Ver bien distintos casos (gf/examples/chapter6/(DShopping.gf|Classes.gf)) 
+de parseo con tipos dependientes) 
+
+Ejemplo:
+p -lang=Spa "A y B son iguales"
+genera:
+PAtom (APred2Distr Equal ?2 (BaseInd (IVar (VString "A")) (IVar (VString "B"))))
+
+Es posible completarlo pasando el AST al comando gt (generate_tree).
+Ejemplo:
+p -lang=Spa "A y B son iguales" | gt -lang=Spa
+genera:
+PAtom (APred2Distr Equal distr_equal (BaseInd (IVar (VString "A")) (IVar (VString "B"))))
+
+Aun no está resuelto como generar en GF las posibles combinaciones de pares de individuos,
+para listas de largo mayor o igual a 3.
+
+Ejemplo:
+parsear la frase:
+ p -lang=Spa "A , B y C son iguales" | gt -lang=Spa
+genera:
+PAtom (APred2Distr Equal distr_equal (ConsInd (IVar (VString "A")) (BaseInd (IVar (VString "B")) (IVar (VString "C")))))
+
+La función de transferencia, para producir un AST que linealice a lenguaje simbólico debería generar:
+(A = B) ∧ (A = C) ∧ (B = C)
+
+
+* Agregué una función PConjs : Conj -> [Prop] -> Prop, (Ver Logic.gf) para parsear listas de proposiciones.
+Ejemplo de uso:
+p -tr -lang=Spa "A es rojo , B es verde y C es azul" | gt -lang=Spa | pt -transfer=PropList | l -bind -lang=Sym
+parsea:
+PConjs CAnd (ConsProp (PAtom (APred1 Rojo (IVar (VString "A")))) (BaseProp (PAtom (APred1 Verde (IVar (VString "B")))) (PAtom (APred1 Azul (IVar (VString "C"))))))
+linealiza:
+(Rojo.A ∧ (Verde.B ∧ Azul.C))
+
+
+* Mejoré el tipo Pred1Type, usando constructores, al estilo Haskell.
+
+TO DO:
+======
+
+1) Terminar distribución de predicados binarios
+2) Implementar Negación de Kinds
+3) Modularizar funciones de transferencia
+4) Entender un poco mejor tipos dependientes, ver si se pueden usar como dijo Miguel (Ver otro log).
+
+02/08/17
+
+copia de mail que mandé:
+
+Buenas, cuento un (no tan) poco lo que estuve haciendo:
+
+1)
+Pregunté en la lista de mail de GF sobre distribución de predicados en una lista de individuos. Más que nada mi intención era saber si existía alguna manera de lograr la generación de todas las combinaciones de 2 elementos de la lista mediante una función de transferencia en GF, y al parecer la respuesta es "No". Sobre esto se me ocurren dos opciones: 
+Dejar GF y usar Haskell. (Mi principal inconveniente con Haskell es que pierdo la "interactividad" que provee la app de GF, con cosas como, parsing incremental, posibilidad de rastrear los AST, etc).
+Seguir con GF, teniendo en mente que hay cosas que no voy a poder hacer, y luego las voy a tener que hacer en Haskell.
+
+2)
+Investigué y logré abrir un servidor sencillo donde uno puede cargar su gramática y hacer parsing incremental. 
+Tiene una interfaz bastante simple y bonita. Todo  el código es del paquete de GF. 
+Ranta llama a la interfaz Minibar, un ejemplo, con gramáticas de prueba está en:
+
+http://cloud.grammaticalframework.org/minibar/minibar.html
+
+El problema: La traducción es directa (sin la posibilidad de usar funciones de transferencia), y hasta ahora no encontré
+la forma de modificar esto, estuve ojeando un poco la API de Javascript.
+Sin embargo puede ser de gran ayuda ver este código si en algún momento implemento algo web propio.
+
+3)
+Lo que hasta ahora más tiempo me viene llevando y sin mucho progreso:
+En un principio el título sería "Negación de Kind".
+
+Como repaso:
+Kind está en este momento pensado como "Dominio de cuantificación" y hay una constructor base, que en SAT es Figura, y modificadores, que son predicados unarios (Pred1) que son (lingüísticamente) adjetivos que modifican a figura.
+
+Luego uno puede lograr parsear frases como:
+
+toda figura roja ... (en realidad, cada figura roja ..., otra de las cosas que tengo que hacer)
+toda figura roja y grande ...
+toda figura roja y abajo de A ... (con aplicación parcial)
+
+y la idea inicial era poder agregar en los dominios de cuantificación un poco de negación y poder aceptar frases como:
+Toda figura que no es roja ...
+Toda figura roja y que no es grande ...
+
+El problema principal, para mí, es que no es tan fácil de generalizar esto.
+
+La primera nota importante que puedo tomar, es que no solo es útil lo que estoy haciendo para dominios de cuantificación, sino que también se aplica en conjunción de predicados en sentencias sin cuantificadores.
+
+Algunos ejemplos:
+
+A es rojo pero no es grande
+A no es rojo y grande
+A no es rojo ni grande
+A es rojo, chico, pero no es cuadrado
+
+y casos así hay un montón, y hasta el momento no los estoy consiguiendo atrapar con alguna idea general, o no tan general, pero que al menos sea aceptable.
+
+Lo más general que se me ocurre: 
+Mezclar adjetivos "positivos" con adjetivos "negados". 
+por ejemplo:
+* A es rojo, [es] grande, y no es cuadrado. / A es rojo, [es] grande pero no es cuadrado.
+* A es rojo, no es grande y es cuadrado.
+
+
+Una idea que por ahí podría simplificar un poco las cosas, es solo permitir "positivos" por un lado y "negativos" por otro.
+Algo como:
+A es Adj1, Adj2, ... y AdjN pero no es Adj(N+1), Adj(N+2), ... ni Adj(N+M).
+
+Es algo arbitrario, pero por ahí algo más claro para interpretar y escribir.
+
+--
+
+De código no hubo mucho avance, principalmente porque estoy un poco trabado con esto.
+
+Perdón por lo extenso, y si por ahí hay cosas que no quedan muy claras, avisen.
+
+Voy a seguir trabajando en estos días con estas ideas, más que nada 3)
+
+Estaría bueno si pueden leerlas antes de la próxima reunión. Yo este viernes estoy en Córdoba, así que si pueden juntarse, me vendría bárbaro.
+
+Saludos, y que anden bien !

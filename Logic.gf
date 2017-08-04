@@ -47,14 +47,19 @@ fun QuantIStoP : Prop -> Prop ;
 fun KindToProp : Kind -> Var -> Prop ;
 
 def
-  QuantIStoP (UnivIS v Figura p) = PQuant ForAll v True (PAtom (APred1 p (IVar v))) ;  
-  QuantIStoP (UnivIS v k p) = PQuant ForAll v (KindToProp k v) (PAtom (APred1 p (IVar v))) ;
+  QuantIStoP (UnivIS v Figura p) = PQuant ForAll v True (Transfer (PAtom (APred1 p (IVar v)))) ;
+  QuantIStoP (UnivIS v k p) = PQuant ForAll v (Transfer (KindToProp k v)) (Transfer (PAtom (APred1 p (IVar v)))) ;
 
-  QuantIStoP (ExistIS v Figura p) = PQuant Exists v True (PAtom (APred1 p (IVar v))) ;  
-  QuantIStoP (ExistIS v k p) = PQuant Exists v (KindToProp k v) (PAtom (APred1 p (IVar v))) ;
+  QuantIStoP (ExistIS v Figura p) = PQuant Exists v True (Transfer (PAtom (APred1 p (IVar v)))) ;
+  QuantIStoP (ExistIS v k p) = PQuant Exists v (Transfer (KindToProp k v)) (Transfer (PAtom (APred1 p (IVar v)))) ;
 
   KindToProp (ModKind Figura pred) v = (PAtom (APred1 pred (IVar v))) ;
   KindToProp (ModKind k pred) v = PConj CAnd (PAtom (APred1 pred (IVar v))) (KindToProp k v) ;
+
+-- tipos dependiente para permitir Pred2 distributivos
+fun
+  distr_equal : Distr Equal ;
+  distr_diff : Distr Different ;
 
 
 -- polimorfic conjunctions
@@ -64,12 +69,29 @@ data
 data
   -- aplicación parcial
   PartPred : Pred2 -> Ind -> Pred1 ;
+
   -- reflexividad en Pred2
   APredRefl : Pred2 -> Ind -> Atom ;
-  -- APred2Distr : Pred2 -> [Ind] -> Atom ;
-  -- PConjs : Conj -> [Prop] -> Prop ;
+
+  -- distributividad de Pred2
+  APred2Distr : (p : Pred2) -> Distr p -> [Ind] -> Atom ;
+  
+  -- conjunción de proposiciones (sentencias). e.g.: "p , q y r"
+  PConjs : Conj -> [Prop] -> Prop ;
+  
+  -- cuantificación simbólica con lista de variables
   -- PQuants : Quant -> [Var] -> Prop -> Prop -> Prop ;
 
+
+-- main transfer function
+fun Transfer : Prop -> Prop ;
+def
+  Transfer (UnivIS v k p) = QuantIStoP (UnivIS v k p) ;
+  Transfer (ExistIS v k p) = QuantIStoP (ExistIS v k p) ;
+  Transfer (PAtom a) = PropPreds (PAtom a) ;
+  Transfer (PNegAtom a) = PropPreds (PNegAtom a) ;
+  Transfer (PConjs c lp) = PropList (PConjs c lp) ;
+  Transfer (PQuant q v r t) = (PQuant q v (Transfer r) (Transfer t)) ;
 
 -- transfer functions for list of preds and list of inds
 fun PropPreds : Prop -> Prop ;
@@ -110,8 +132,22 @@ def
   PropPreds (PNegAtom (APred1 (ConjPred1 c (BasePred1 p1 p2)) i)) = PNeg (PConj c (PropPreds (PAtom (APred1 p1 i))) (PropPreds (PAtom (APred1 p2 i)))) ;
   PropPreds (PNegAtom (APred1 (ConjPred1 c (ConsPred1 p1 lp)) i)) = PNeg (PConj c (PropPreds (PAtom (APred1 p1 i))) (PropPreds (PAtom (APred1 (ConjPred1 c lp) i)))) ;  
 
+  -- distr Pred2
+  PropPreds (PAtom (APred2Distr Equal d (BaseInd i1 i2))) = PAtom (APred2 Equal i1 i2) ;
+  PropPreds (PAtom (APred2Distr Different d (BaseInd i1 i2))) = PAtom (APred2 Different i1 i2) ;
+  PropPreds (PNegAtom (APred2Distr Equal d (BaseInd i1 i2))) = PNegAtom (APred2 Equal i1 i2) ;
+  PropPreds (PNegAtom (APred2Distr Different d (BaseInd i1 i2))) = PNegAtom (APred2 Different i1 i2) ;
+  -- PropPreds (PAtom (APred2Distr Equal (ConsInd i li))) = como lograr todas las combinaciones de individuos
+
   -- otherwise  
   PropPreds (PAtom a) = (PAtom a) ;
   PropPreds (PNegAtom a) = (PNegAtom a) ;
 
+
+-- transfer functions for list of props
+fun PropList : Prop -> Prop ;
+
+def 
+  PropList (PConjs c (BaseProp p1 p2 )) = PConj c p1 p2 ;
+  PropList (PConjs c (ConsProp p lp)) = PConj c p (PropList (PConjs c lp)) ;
 }

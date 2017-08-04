@@ -1,7 +1,7 @@
 concrete CategoriesSym of Categories = {
 
 param Pred2Type = Equality | Inequality | Position ;
-param Pred1Type = Original | Equality1 | Inequality1 | Position1 ;
+param Pred1Type = Original | PA Pred2Type ;
 
 lincat
   Prop, Atom, Var, Conj, Quant, Ind, Fun1, Fun2 = Str ;

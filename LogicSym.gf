@@ -10,9 +10,9 @@ lin
   PQuant = quant ;
   APred1 p x = case p.t of {
                  Original => apply p.symb x ;
-                 Position1 => apply (apply p.symb x) p.ind;
-                 Equality1 => equal p.symb x p.ind ;
-                 Inequality1 => negate (equal p.symb x p.ind)
+                 (PA Position) => apply (apply p.symb x) p.ind;
+                 (PA Equality) => equal p.symb x p.ind ;
+                 (PA Inequality) => negate (equal p.symb x p.ind)
                } ;
   APred2 p x y = case p.t of {
                    Equality => equal p.s x y ;
@@ -40,12 +40,13 @@ lin
 
 lin
   PNegAtom = negate ;
-  PartPred p i = { t = pred1_param p.t ; symb = p.s ; ind = i } ;
+  PartPred p i = { t = PA p.t ; symb = p.s ; ind = i } ;
   APredRefl p i = case p.t of {
                    Equality => equal p.s i i ;
                    Inequality => negate (equal p.s i i) ;
                    Position => apply (apply p.s i) i
                  } ;
+  
   -- No se linealiza Kind a lenguaje simbólico
   -- No se linealiza QuantIS a lenguaje simbólico.
 
@@ -59,11 +60,5 @@ oper
     bin_op : (op, s1, s2 : Str) -> Str = \op, s1, s2 -> parentesis (s1 ++ op ++ s2) ;
     quant : (q, v, r, t : Str) -> Str = 
       \q, v, r, t -> (glue (glue "〈" q) v) ++ ":" ++ r ++ ":" ++  t ++ "〉" ;
-    pred1_param : Pred2Type -> Pred1Type = 
-      \p2type -> case p2type of {
-                  Position => Position1 ;
-                  Equality => Equality1 ;
-                  Inequality => Inequality1
-                } ;
 
 }
