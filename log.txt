@@ -12,13 +12,32 @@ La diferencia es tratada aparte para poder escribir frases como "A es distinto d
 Sin esta separación la única forma de expresar esto sería mediante la frase: 
 "A no es igual a B" (como negación de sentencias atómicas).
 
+[
+
+Miguel: no es tan fácil linealizar ¬A=B como "A es diferente de B" porque
+los parámetros refieren a cosas linealizadas.
+
+Diego tira la idea de usar tipos dependientes para ver si facilita.
+
+La solución es utilizar un constructor nuevo que permita parsear más
+oraciones pero nos lo quitamos de encima mediante una función de
+transferencia. La pregunta es si podemos hacer una función inversa
+que nos de tanto "¬(A = B)" como "A≠B".
+
+¿Una función de transferencia puede devolver una lista?
+
+Experimento: parsear "A es distinto de B" y devolverlo de vuelta a
+español pasando por Symb nos da un montón de resultados entre ellos
+el original.
+]
+
 
 * Implementé la aplicación parcial de predicados binarios. 
     (PartPred : Pred2 -> Ind -> Pred1, en Logic.gf)
 Esta nueva funcionalidad requirió, en primer medida, modificar 
 las categorías en la sintaxis concreta (lincat) de Pred1 y Pred2.
 La forma en que implementé esto es usando records y parámetros, 
-que serán los que definirán el tipo de predicado y haciendo casos 
+que serán los que definirán el tipo de predicado y hacielndo casos 
 (comando "case") en Logic(Spa | Sym).gf para manipular los regristros 
 de manera adecuada.
 
@@ -33,7 +52,26 @@ y en el caso de la sintaxis del lenguaje simbólico, los tipos de registros:
   el símbolo del predicado y el individuo que se propaga en caso de ser una aplicación parcial.
   (Notar que en el caso que Pred1Type sea Original, ind no tiene utilidad. 
   Buscar mejor forma de resolver esto!)
-  
+
+[
+
+- Una primera mejora es utilizar un constructor para Pred1Type y no repetir
+cada constructor de Pred2Type.
+
+- ¿Podemos generalizar ambos tipos y definir Pred cuyo primer campo indica
+si es binario o unario? ¿Cómo lidiamos con aplicación parcial? 
+
+- Para evitar tener que inventar un string (vacío) para cuando Pred1Type
+es original podemos utilizar tipos dependientes
+
+def
+  indPred1 : Pred1Type -> Set 
+  indPred1 Original = ⊥
+  indPred1 (PA _)   = String
+
+
+] 
+
   - Pred2 = { t : Pred2Type ; s : Str } ;
 (Para más detalle ver Categories(Spa | Sym).gf y Logic(Spa | Sym).gf)
 
@@ -75,6 +113,7 @@ se traduce a:
 
 (Ver PropPreds en Logic.gf para ver todos los casos.)
 
+[ Miguel le pasa la gramática a Diego ]
 
 * Agregué APredRefl : Pred2 -> Ind -> Atom, para escribir frases donde los individuos aplicados
 al predicado binario sean el mismo.
@@ -97,6 +136,15 @@ Frases que agregaría esto:
 Pensamiento:
     Predicados "posicionales", como estar arriba de, no deberían poder ser
     "distribuídos".
+
+[
+
+Diego está usando tipos dependientes para indicar si se puede
+distribuir o no.
+
+]
+
+
 
 Fecha: 24/07/17
 
@@ -148,7 +196,8 @@ TO DO:
 1) Terminar distribución de predicados binarios
 2) Implementar Negación de Kinds
 3) Modularizar funciones de transferencia
-4) Entender un poco mejor tipos dependientes, ver si se pueden usar como dijo Miguel (Ver otro log).
+4) Entender un poco mejor tipos dependientes, ver si se pueden usar como dijo Miguel 
+(Ver comentarios en 19/07).
 
 02/08/17
 
