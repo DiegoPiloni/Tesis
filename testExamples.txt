@@ -126,7 +126,7 @@ Lista de sentencias:
 
 9)
 Frase:
-A es rojo, B es azul y C es verde
+A es rojo , B es azul y C es verde
 
 AST (Original):
 PConjs CAnd (ConsProp (PAtom (APred1 Rojo (IVar (VString "A")))) (BaseProp (PAtom (APred1 Azul (IVar (VString "B")))) (PAtom (APred1 Verde (IVar (VString "C"))))))

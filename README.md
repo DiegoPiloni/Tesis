@@ -257,108 +257,352 @@ El primer desafío que se encuentra en el aprendizaje de la lógica está dado p
 El objetivo de este proyecto es extender el programa Sat con un módulo que permita a estudiantes la exploración de la traducción de lenguaje natural a fórmulas de lógica de primer orden y viceversa. De esta manera, la/el estudiante puede ir familiarizándose con la escritura formal a través de ejemplos que ella/el construye y contrastar su formalización con todas las traducciones posibles y viceversa. Esta traducción se basará teóricamente en la formalización de lenguaje natural utilizando [teoría de tipos propuesta por Ranta](https://books.google.com.ar/books?hl=sv&lr=&id=A5m13eGOcqYC&oi=fnd&pg=PA1&dq=aarne+ranta&ots=KjH2Put2Wa&sig=J__Gk-RZctvQzSqJBDVXyngpY1Y&redir_esc=y#v) y para la implementación se utilizará el Grammatical Framework.
 
 
-## Trabajo realizado hasta el momento
+# Trabajo realizado hasta el momento
 
-### Gramática abstracta
+# Explicación de la gramática
 
-Para construir la gramática abstracta es necesario primero definir categorías, que serán los tipos de los AST, y luego funciones sobre estas categorías.
-Las presentadas a continuación son inspiradas por el trabajo de A. Ranta: [Translating between Language and Logic: What Is Easy and What Is Difficult](https://www.semanticscholar.org/paper/Translating-between-Language-and-Logic-What-Is-Eas-Ranta/581281bb6292814ce285dc1de82a9785fdac2b5d).
+Se presenta a contuación las categorías y constructores más importantes de la gramática abstracta. Esta gramática es utiizada para poder parsear frases del español y poder traducirlas luego al lenguaje simbólico de fórmulas de primer orden. Se explica la razón de existencia de cada categoría y constructor.
 
-
-#### Base
-
-Una lista de las categorías básicas de la gramática abstracta definida hasta el momento.
+# Categorías principales
 
 | Categorías    | Descripción                     | Ejemplos                          |
 | ------------- |:-------------------------------:|:---------------------------------:|
-|    Prop       | proposición, compleja o atomica | A es rojo y B es grande           |
+|    Prop       | proposición, compleja o atómica | A es rojo y B es grande           |
 |    Atom       | propisición atómica             | A es rojo                         |
-|    AtomEqual  | igualdad (atómica)              | A es igual a B                    |
-|    Pred1      | Predicado unario                | es rojo                           |
+|    Pred1      | Predicado unario                | rojo                           |
 |    Pred2      | Predicado binario               | está arriba de                    |
-|    Ind        | termino indivual                | A                                 |
+|    Ind        | término indivual                | A                                 |
 |    Var        | variable de cuantificación      | x                                 |
-|    Fun1       | función unaria                  | cuadrado (aritmética) e.g x^2        |
-|    Fun2       | función binaria                 | suma (aritmética) e.g x+y            |
+|    Fun1       | función unaria                  | cuadrado (aritmética) e.g. x^2     |
+|    Fun2       | función binaria                 | suma (aritmética) e.g. x+y         |
 |    Conj       | conjunción                      | y, o                              |
+|    Quant      | símbolo de cuantificación       | ∀, ∃                              |
+| Kind          | dominio de cuantificación       | figura                            |
+
+# Constructores de cada categoría
+
+## Prop
+
+Prop es la categoría usada para representar cualquier proposición de primer orden válida. Se debe tener en cuenta que habrá constructores más cercanos al lenguaje simbólico y otros más cercanos al lenguaje natural.
+La razón de esto es usar los constructores más cercanos al lenguaje natural para parsear español, construyendo árboles abstractos de sintaxis (AST), que luego serán transformados mediante funciones de transferencia en AST formados por los constructores más cercanos al lenguaje simbólico, para así luego linealizarlos de manera directa en fórmulas de primer orden.
+
+#### Proposiciones simples
+
+* True : Prop
+* False : Prop
+
+Se usará True en el rango de cuantificación, por ejemplo al traducir: "cada figura es roja" en〈 ∀x : True : Rojo.x 〉
 
 
-Los constructores básicos de árboles abstractos, definidos en la gramática abstracta como funciones:
+#### Proposiciones compuestas
 
-| Funciones                                  | Ejemplos                           |
-| -------------------------------------------|:----------------------------------:|
-|  PAtom  : Atom  -> Prop                    | A es cuadrado                      |
-|  PNeg   : Prop  -> Prop                    | no es el caso que A **sea** grande |
-|  PConj  : Conj  -> Prop -> Prop -> Prop    | A es grande y A es rojo            |
-|  PImpl  : Prop  -> Prop -> Prop            | si A es grande entonces A es rojo  |
-|  PUniv1  : Var -> Prop -> Prop             | < ∀x : : Rojo.x >                  |
-|  PExist1 : Var -> Prop -> Prop             | < ∃x : : Rojo.x >                  | 
-|  PUniv2  : Var -> Prop -> Prop -> Prop     | < ∀x : Tr.x : Rojo.x >             | 
-|  PExist2 : Var -> Prop -> Prop -> Prop     | < ∃x : Tr.x : Rojo.x >             |  
-|  IVar   : Var -> Ind                       |  x                                 |
-|  APred1 : Pred1 -> Ind -> Atom             |  A es grande                       |
-|  APred2 : Pred2 -> Ind -> Ind -> Atom      |  A está arriba de B                |
-|  AEqual : Ind -> Ind -> AtomEqual          |  A is igual a B                    |
-|  IFun1  : Fun1 -> Ind -> Ind               |  el cuadrado de x                  |
-|  IFun2  : Fun2 -> Ind -> Ind -> Ind        |  la sum de A y B                   |
-|  VString : String -> Var                   |  x                                 |
-|  CAnd, COr : Conj                          |  y, o                              |
+##### Proposiciones atómicas:
 
-Donde es importante notar lo siguiente:
+* PAtom  : Atom  -> Prop ;
 
-* PUniv1 y PExist1 definen árboles abstractos para cuantificación con rango true.
-* PUniv2 y PExist2 definen árboles abstractos para cuantificación con rango que dependa de alguna proposición.
-* No se linealizan al castellano los árboles creados por PUniv ni PExist. solo se usarán para linealizar al lenguaje simbólico de lógica de primer orden.
-* Las funciones que se usarán para parsear cuantificación de lenguaje natural son agregadas en la extensión.
+Proposiciones atómicas son aplicaciones de predicados 
+unarios y binarios.
+
+La restricción de aridad está dada en parte por SAT, ya que los predicados son únicamente unarios y binarios. Se podría generalizar la aridad, pero por el momento no se cree conveniente. Suposición: No es muy común en lenguaje natural predicados con aridad mayor.
+
+* Ejemplo aridad 3: "entre", "A entre B y C"
+(Aridad 3 podría llegar a ser útil en SAT)
+
+* Ejemplos aridad >3 ?
+
+Ejemplos:
+
+* A es rojo
+* A está arriba de B
+* A es igual a B
+* A es distinto de B
 
 
-#### Extensión
+##### Negación de proposiciones:
 
-Defino nuevas categorías y funciones que extienden las dadas anteriormente, que serán útiles para aceptar frases más naturales del español.
+* PNeg   : Prop  -> Prop ; 
 
-Por el momento solo fueron añadidas:
+Negación de proposiciones.
 
-* Negación de atómicas: ej: A no es grande
-* Negación de igualdad: ej: A es distinto de B
-* Cuantificación in-situ: ej: Todos los triangulos rojos son grandes. Sin embargo por ahora solo se puede parsear: "Todas las figuras triangulares rojas son grandes". (Forma, color y tamaño son adjetivos modificadores de Figura).
+Ejemplo:
 
-| Categoría | Descripción               | Ejemplos                  |
-|------------|---------------------------|---------------------------|
-| Kind       | Dominio de cuantificación | figura, figura triangular |
+* no es el caso que A sea rojo
+
+(No es muy natural en proposiciones atómicas, ver PNegAtom)
+
+##### Negación atómica:
+
+* PNegAtom  : Atom -> Prop ;
+
+Negación de proposiciones atómicas. Se utiliza para aceptar frases negadas más naturales como:
+
+* A no es rojo
+* A no está arriba de B
+* A no es igual B
+
+##### Operadores binarios:
+
+* PConj  : Conj  -> Prop -> Prop -> Prop ;
+* PImpl  : Prop  -> Prop -> Prop ;
+
+Ejemplos:
+
+* A es rojo y B es azul
+* si A es rojo entonces B está arriba de A
+* si cada figura es roja entonces A es rojo
+
+##### Cuantificación:
+
+* PQuant  : Quant -> Var -> Prop -> Prop -> Prop ;
+
+Cuantificación de la forma:
+
+〈 Qx : R.x : T.x 〉
+
+Está ligado fuertemente al lenguaje simbólico. No hay un fragmento de lenguaje natural que parsee directamente a un AST con esta categoría.
+Se genera a través de funciones de transferencia desde cuantificación in-situ. (Ver UnivIS y ExistIS)
+
+##### Cuantificación in-situ:
+
+* UnivIS  : Var -> Kind -> Pred1 -> Prop ;
+* ExistIS : Var -> Kind -> Pred1 -> Prop ; 
+
+Se utilizan para parsear frases cuantificadas de lenguaje natural.
+Notar que hay ciertas restricciones sobre el rango y término. El rango tiene categoría Kind (ver Kind). Esta categoría juega el papel de dominio de cuantificación y el término tiene categoria Pred1.
+
+¿Por qué Kind y por qué Pred1?
+
+Un primer itento de justificación es que la gramática está inspirada en el trabajo [Ranta gf-cade-2011](http://old-darcs.grammaticalframework.org/gf-cade-2011/code/).
+
+La idea de cuantificación in-situ es aceptar frases naturales de la forma: "alguna [Kind] es [Pred1]" ó "cada [Kind] es [Pred1]".
+
+Ejemplos:
+
+* "alguna figura es roja"
+* "alguna figura grande es roja"
+* "alguna figura grande es roja o verde"
+
+Esto tiene ciertas limitaciones, como por ejemplo, no poder usar predicados binarios en el término o en el rango (Ver constructores de Kind). Sin embargo ya veremos que la aplicación parcial de predicados binarios nos permitirá aceptar frases de la forma:
+
+* "alguna figura está arriba de A"
+* "alguna figura arriba de A es roja"
+
+Con este modo de representar cuantificación in-situ siguen existiendo algunas limitaciones a resolver, como:
+
+* Negaciones en rango y término
+* Cuantificación anidada
+
+Ejemplos de frases que se desearían aceptar:
+
+* "alguna figura que no es roja está arriba de B"
+* "alguna figura roja está arriba de alguna figura azul"
+* "hay alguna figura roja arriba de alguna figura azul"
+
+Pienso que estas limitaciones deberían ser resultas ya que suele ser bastante natural el uso de ambas construcciones en el lenguaje natural.
 
 
-| Funciones                              | Ejemplos                   |
-|----------------------------------------|------------------------------|
-| PNegAtom: Atom -> Prop                 | A no es rojo                 |
-| PNegEqual : Ind -> Ind -> Prop         | A es distinto de B           |
-| UnivIS: Var -> Kind -> Pred1 -> Prop   | Cada figura roja es grande   |
-| ExistIS : Var -> Kind -> Pred1 -> Prop | Alguna figura roja es grande |
-| ModKind : Kind -> Pred1 -> Kind        | Figura roja                  |
+## Atom
 
-Nota: Pienso que debería quitar Var de UnivIS y ExistIS, y generar las variables nuevas al momento de traducir arboles generados por UnivIS, ExistIS a PUniv, PExist respectivamente.
+Atom es la categoría usada para representar proposiciones atómicas.
 
-#### Lexicón
+##### Predicados 
 
-| Funciones                                 | Descripción   |
-|-------------------------------------------|---------------|
-| Rojo, Azul, Verde : Pred1                 | Color         |
-| Chico, Mediano, Grande: Pred1             | Tamaño        |
-| Triangulo, Cuadrado, Circulo : Pred1      | Forma         |
-| Izquierda, Derecha, Arriba, Abajo : Pred2 | Posición      |
-| Figura : Kind                             | Elemento base |
+* APred1 : Pred1 -> Ind -> Atom ;
 
-#### Funciones de transformación
+* APred2 : Pred2 -> Ind -> Ind -> Atom ;
 
-Son las encargadas de realizar una transformación de los árboles abstractos parseados en lenguaje natural.
+Estos son los constructores de proposiciones atómicas más comunes.
 
-Hasta el momento se utilizan para mapear cuantificación in-situ a arboles generados por PUniv o PExist.
-Es necesario para ello transformar los árboles de tipo Kind a una conjunción de predicados.
+Su uso en lenguaje natural:
 
-| Funciones                        | Descripción                                                   |
-|----------------------------------|---------------------------------------------------------------|
-| UnivIStoP : Prop -> Prop         | Transformación de cuantificación universal in-situ a PUniv    |
-| ExistIStoP : Prop -> Prop        | Transformación de cuantificación existencial in-situ a PExist |
-| KindToProp : Kind -> Var -> Prop | Transformación de Kind a conjunción de predicados             |
+* A es rojo (Pred1)
+* A es grande y verde (Ver ConjPred1)
+* A está arriba de B
+* A está arriba de B y C (Ver ConjInd)
+
+##### Distributividad de predicado binario
+
+* APred2Distr : (p : Pred2) -> Distr p -> [Ind] -> Atom
+
+Permite la distributividad de un predicado binario en una lista de individuos.
+
+Notar el uso del tipo dependiente Distr p, donde p es un predicado binario. (Leer el libro de ranta para escribir sobre tipos dependientes y su uso como Proof object)
+
+La utilidad del tipo dependiente en este caso es marcar si un predicado binario es distributivo. Por ejemplo, en nuestro caso la igualdad y desigualdad son marcados como distributivos.
+
+Por lo que hay un elemento para cada tipo: 
+
+* distr_equal : Distr Equal ;
+* distr_diff : Distr Different ;
+
+Ejemplos de uso:
+
+* A, B y C son iguales. que traduce a: (A = B) ∧ (A = C) ∧ (B = C)
+
+* A y B son distintos. que traduce a : ¬(A = B)
+
+
+##### Aplicación Reflexiva de predicado binario
+
+* APredRefl : Pred2 -> Ind -> Atom ;
+
+Aplicación de un predicado binario con el mismo individuo.
+Es un caso particular de APred2. Permite aceptar frases como:
+
+* A es igual a sí
+* A está arriba de sí
+
+
+## Pred1 y Pred2
+
+Los predicados representan las características de los individuos de nuestro universo.
+Uno puede querer preguntarse en SAT, por ejemplo, si una figura particular es un cuadrado, o si es rojo.
+Luego, los predicados son un fragmento dependiente de la signatura, que el usuario de la aplicación debería definir. 
+En SAT tiene sentido definir los siguientes predicados:
+
+#### Constructores básicos
+
+##### Pred1
+
+###### Color de figura
+* Rojo, Azul, Verde : Pred1 ;
+
+###### Tamaño de figura
+* Chico, Mediano, Grande: Pred1 ;
+
+###### Forma de figura
+* Triangulo, Cuadrado, Circulo : Pred1 ;
+
+
+Ejemplos:
+
+* A es rojo
+* A es chico
+* A es cuadrado
+
+##### Pred2
+
+###### Igualdad y diferencia
+
+* Equal : Pred2 ;
+* Different : Pred2 ;
+
+Se define la diferencia como un predicado aparte para permitir frases:
+
+* A no es igual a B (Negación de Equal)
+* A es diferente de B (Different)
+
+##### Posición vertical
+* Arriba, Abajo : Pred2 ;
+
+##### Posición horizontal
+* Izquierda, Derecha : Pred2 ;
+
+Ejemplos:
+  
+* A está arriba de B
+* A está a la izquierda de B
+
+#### Conjunción de predicados y aplicación parcial
+
+* ConjPred1 : Conj -> [Pred1] -> Pred1 ;
+
+Conjunción de predicados unarios permite usar frases como: "A es rojo y grande"
+
+* PartPred : Pred2 -> Ind -> Pred1 ;
+
+Aplicación parcial, principalmente útil en cuantificación in-situ, ya que la restricción de rango y término requieren predicados unarios.
+
+Se pueden aceptar frases como:
+
+* cada figura arriba de B es roja (aplicación parcial en rango)
+* cada figura roja está arriba de B (aplicación parcial en término)
+
+
+## Ind
+
+Son los elementos individuales del universo. Tanto los predicados como la cuantificación operan sobre ellos.
+
+##### Constantes y Variables
+
+* IVar   : Var -> Ind ;
+
+Por el momento no hay una diferencia entre variables (útiles para cuantificar) y elementos constantes. (Esto es algo a mejorar)
+
+SAT hace una diferencia entre constantes (mayúsculas) y variables (comienzan con una letra minúscula).
+
+#### Conjunción de individuos
+
+* ConjInd : Conj -> [Ind] -> Ind ;
+
+Es útil para poder aplicar un predicado a varios individuos. (Ver por ejemplo APred1 y notar que toma un único individuo).
+
+Ejemplo:
+
+* A, B y C son rojos
+* A está arriba de B y C
+
+
+## Var
+
+Variables de cuantificación. 
+
+* VString : String -> Var ;
+
+El único constructor es VString, no presta importancia a minúsculas, ni mayúsculas.
+
+## Fun1 y Fun2
+
+Si bien en SAT no hay funciones, están incluidas en la gramática.
+La utilidad que podrían tener es construir individuos resultado de funciones, usando constructores como:
+
+* IFun1  : Fun1 -> Ind -> Ind ;
+* IFun2  : Fun2 -> Ind -> Ind -> Ind ;
+
+Ejemplos en una aplicación de aritmética:
+
+* El cuadrado de x (Fun1)
+* La suma de a y b (Fun2)
+
+## Conj
+
+Conjunciones polimórficas. Se utilizan para conectar proposiciones, individuos y predicados.
+
+* CAnd, COr : Conj ;
+
+Ejemplos:
+
+* A es rojo o B es azul
+* A es grande y verde
+* A y B son cuadrados
+
+## Quant
+
+Define los símbolos de cuantificación de primer orden.
+
+* ForAll : Quant ; (∀)
+* Exists : Quant ; (∃)
+
+## Kind
+
+Categoría utilizada para definir los dominios de cuantificación in-situ. Está más ligado al lenguaje natural que al lenguaje simbólico.
+
+Kind también es dependiente de la signatura. En SAT Kind tiene un solo constructor básico que es Figura.
+
+* Figura : Kind ;
+
+Existe además un modificador de Kind para tener dominios más restringidos.
+
+* ModKind : Kind -> Pred1 -> Kind ;
+
+Esto permite frases como:
+
+* cada figura roja es grande
+* cada figura roja y grande es cuadrada
+
+# Funciones de transferencia
+
+(Explicar las funciones de transferencia)
 
 
 ## Bibliografía
