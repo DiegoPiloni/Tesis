@@ -2,6 +2,7 @@ concrete LogicSpa of Logic = CategoriesSpa, LexiconSATSpa ** open
   SyntaxSpa, 
   (P = ParadigmsSpa), 
   (E = ExtraSpa),
+  (MS = MakeStructuralSpa),
   SymbolicSpa, 
   SymbolSpa,
   Prelude in {
@@ -54,6 +55,7 @@ lin
 
   CAnd = and_Conj ;
   COr = or_Conj ;
+  sii_Conj = MS.mkConj "" "si y solo si" P.singular ;
 
 -- extension con Kind
 

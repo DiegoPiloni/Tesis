@@ -31,6 +31,7 @@ lin
 
   CAnd = "∧" ;
   COr = "∨" ;
+  sii_Conj = "≡" ;
 
   True = "True" ;
   False = "False" ;
