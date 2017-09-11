@@ -110,7 +110,7 @@ Fórmula:
 
 8)
 Frase:
-A no es rojo , chico y cuadrado 
+A no es rojo , chico y cuadrado
 
 AST (Original):
 PNegAtom (APred1 (ConjPred1 CAnd (ConsPred1 Rojo (BasePred1 Chico Cuadrado))) (IVar (VString "A")))

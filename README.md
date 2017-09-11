@@ -229,7 +229,7 @@ lin Compl v o = table { a => v ! a ++ o.s ! acc };
 Ejemplo: she loves her
 ```
 
-### Parallel multiple context free grammars
+### Parallel multiple context free grammars
 
 GF usa internamente [Parallel multiple context free grammars (PMCFG)](http://www.sciencedirect.com/science/article/pii/030439759190374B), definidas como gramáticas ligeramente sensitivas al contexto. Lo que en GF puede pensarse de manera simple como gramáticas sobre tuplas. Un hecho interesante sobre PMCFG es que, al igual que las CGF, permite parsing polinomial. 
 
@@ -257,13 +257,13 @@ El primer desafío que se encuentra en el aprendizaje de la lógica está dado p
 El objetivo de este proyecto es extender el programa Sat con un módulo que permita a estudiantes la exploración de la traducción de lenguaje natural a fórmulas de lógica de primer orden y viceversa. De esta manera, la/el estudiante puede ir familiarizándose con la escritura formal a través de ejemplos que ella/el construye y contrastar su formalización con todas las traducciones posibles y viceversa. Esta traducción se basará teóricamente en la formalización de lenguaje natural utilizando [teoría de tipos propuesta por Ranta](https://books.google.com.ar/books?hl=sv&lr=&id=A5m13eGOcqYC&oi=fnd&pg=PA1&dq=aarne+ranta&ots=KjH2Put2Wa&sig=J__Gk-RZctvQzSqJBDVXyngpY1Y&redir_esc=y#v) y para la implementación se utilizará el Grammatical Framework.
 
 
-# Trabajo realizado hasta el momento
+# Trabajo realizado hasta el momento
 
 # Explicación de la gramática
 
 Se presenta a contuación las categorías y constructores más importantes de la gramática abstracta. Esta gramática es utiizada para poder parsear frases del español y poder traducirlas luego al lenguaje simbólico de fórmulas de primer orden. Se explica la razón de existencia de cada categoría y constructor.
 
-# Categorías principales
+# Categorías principales
 
 | Categorías    | Descripción                     | Ejemplos                          |
 | ------------- |:-------------------------------:|:---------------------------------:|
@@ -330,7 +330,7 @@ Ejemplo:
 
 (No es muy natural en proposiciones atómicas, ver PNegAtom)
 
-##### Negación atómica:
+##### Negación atómica:
 
 * PNegAtom  : Atom -> Prop ;
 
@@ -464,7 +464,7 @@ En SAT tiene sentido definir los siguientes predicados:
 
 ##### Pred1
 
-###### Color de figura
+###### Color de figura
 * Rojo, Azul, Verde : Pred1 ;
 
 ###### Tamaño de figura
@@ -480,9 +480,9 @@ Ejemplos:
 * A es chico
 * A es cuadrado
 
-##### Pred2
+##### Pred2
 
-###### Igualdad y diferencia
+###### Igualdad y diferencia
 
 * Equal : Pred2 ;
 * Different : Pred2 ;
@@ -576,7 +576,7 @@ Ejemplos:
 * A es grande y verde
 * A y B son cuadrados
 
-## Quant
+## Quant
 
 Define los símbolos de cuantificación de primer orden.
 
@@ -602,7 +602,122 @@ Esto permite frases como:
 
 # Funciones de transferencia
 
-(Explicar las funciones de transferencia)
+Las funciones de transferencia tienen como objetivo transformar arboles de sintaxis abstractos (AST) generados a partir del parsing de sentencias en lenguaje natural en otros AST cuya linealización a lenguaje simbólico sea directa.
+
+Las funciones de transferencia deben ser definidas cuidadosamente, en casos positivos tanto como negativos, para lograr traducir de la manera más natural y correcta posible la frase original.
+
+Algunas frases del lenguaje natural, como por ejemplo: "A, B y C son rojos" no tienen una traducción tan directa a una fórmula lógica, sin embargo la frase "A es rojo, B es rojo y C es rojo", con el mismo significado, es bastante más cercana a lo que el lenguaje simbólico de la lógica nos permite escribir.
+La fórmula generada por ambas frases debería ser: "Rojo.A ∧ Rojo.B ∧ Rojo.C" 
+
+Se listan y explican a continuación las funciones de transferencia hasta el momento definidas. La implementación de estas funciones se encuentra en el archivo *Logic.gf* 
+
+### Transfer
+
+Transfer es la principal función de transferencia, la cual mediante pattern matching decide que funciones de transferencia más específicas deberían ser usadas.
+
+El pattern matching reconoce los AST generados por lo siguientes constuctores:
+
+* Cuantificación in-situ: UnivIS, ExistIS
+* Proposiciones atómicas: PAtom
+* Negación de atómicas: PNegAtom
+* Conjunción de lista de proposiciones: PConjs
+
+Detallamos a continuación las funciones de transferencia usadas para estos constructores.
+
+#### Cuantificación in-situ
+
+Se definen las siguientes dos funciones
+
+* QuantIStoP : Prop -> Prop ;
+* KindToProp : Kind -> Var -> Prop ;
+
+QuantIStoP se encarga de transformar AST generados mediente UnivIS o ExistIS en AST generados por PQuant.
+Para generar el rango se utiliza KindToProp y el término no sufre modificaciones.
+
+KindToProp se encarga de construir el rango apropiado para el AST generado por PQuant.
+En el caso que Kind sea Figura (Notar que Kind es dependiente de la signatura), el rango será True.
+En el caso que Kind esté modificado con predicados unarios el rango será una conjunción de cada uno de estos.
+
+#### Proposiciones atómicas y Negación de atómicas
+
+Se transforman los AST de proposiciones atómicas ya que que algunos de estos AST estarán formados por listas de individuos y listas de predicados, los cuales no se linealizan de manera directa al lenguaje simbólico.
+
+Para manipular proposiciones atómicas se define la siguiente función:
+
+* TransAtom : Prop -> Prop ;
+
+TransAtom también distingue mediante pattern matching distintos casos posibles de proposiciones atómicas. Estos casos son:
+
+* Aplicación de Pred1 a lista de individuos
+* Aplicación de Pred2 a lista de invididuos (Izquierda)
+* Aplicación de Pred2 a lista de individuos (Derecha)
+* Aplicación parcial de Pred2 en Pred1 con lista de individuos
+* Aplicación de lista de Pred1
+* Distribución de Pred2 sobre lista de individuos
+
+Se detalla cada uno de estos casos a continuación.
+
+*Definición auxiliar:* Se define Polarity con dos constructores, Pos y Neg, utilizados para representar aplicaciones positivas y negativas, respectivamente.
+
+
+##### Aplicación de Pred1 a lista de individuos
+
+Ejemplo: Se transforma el AST de la frase "A , B y C son rojos" al generado por "A es rojo, B es rojo y C es rojo".
+
+Se utiliza la siguiente función para manipular casos tanto positivos como negativos:
+
+* Pred1ListInd : Polarity -> Pred1 -> Conj -> [Ind] -> Prop ;
+
+
+##### Aplicación de Pred2 a lista de invididuos (Izquierda)
+
+Ejemplo: Se transforma el AST de la frase "A , B y C están arriba de D" al generado por "A está arriba de D, B está arriba de D y C está arriba de D" 
+
+Se utiliza la siguiente función para manipular casos tanto positivos como negativos:
+
+* Pred2ListIndIzq : Polarity -> Pred2 -> Conj -> [Ind] -> Ind -> Prop ;
+
+##### Aplicación de Pred2 a lista de individuos (Derecha)
+
+Ejemplo: Se transforma el AST de la frase "A está abajo de B , C y D" al generado por "A está abajo de B, A está abajo de C y A está abajo de D"
+
+Se utiliza la siguiente función para manipular casos tanto positivos como negativos:
+
+* Pred2ListIndDer : Polarity -> Pred2 -> Conj -> Ind -> [Ind] -> Prop ;
+
+
+##### Aplicación parcial de Pred2 en Pred1 con lista de individuos
+
+Ejemplo: En la frase "A está abajo de B y C", se interpreta "abajo de B y C" como aplicación parcial del predicado binario Abajo.
+
+Se utiliza la siguiente función para manipular casos tanto positivos como negativos:
+
+* PartPred2ListInd : Polarity -> Pred2 -> Conj -> Ind -> [Ind] -> Prop ;
+
+##### Aplicación de lista de Pred1
+
+Ejemplo: Se transforma el AST de la frase "A es rojo , grande y cuadrado" al generado por "A es rojo, A es grande y A es cuadrado"
+
+Se utiliza la siguiente función para manipular casos tanto positivos como negativos:
+
+* TransListPred1 : Polarity -> Conj -> [Pred1] -> Ind -> Prop ;
+
+##### Distribución de Pred2 sobre lista de individuos
+
+Ejemplo: Se transforma el AST de la frase "A, B y C son iguales" al generado por "A es igual a B, A es igual a C y B es igual a C"
+
+Se utiliza la siguiente función para manipular casos tanto positivos como negativos:
+
+* distrBin : Polarity -> Pred2 -> [Ind] -> Prop ;
+
+#### Conjunción de lista de proposiciones
+
+Ejemplo: Se tranforma el AST de la frase "A es rojo, B es azul y C es verde" en el generado por "A es rojo y B es azul y C es verde"
+
+La función que hace pattern matching en el constructor de listas de proposiciones es la siguiente:
+
+* TransPConjs : Prop -> Prop ;
+
 
 
 ## Bibliografía

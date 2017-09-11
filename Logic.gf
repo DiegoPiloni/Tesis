@@ -140,25 +140,38 @@ def
 
 
 -- Transfer Pred2 with list of inds (Derecha). (ej: A está arriba de B y C)
--- Note this doesn't take polarity parameter
-fun Pred2ListIndDer : Pred2 -> Conj -> Ind -> [Ind] -> Prop ;
+fun Pred2ListIndDer : Polarity -> Pred2 -> Conj -> Ind -> [Ind] -> Prop ;
 def
-  Pred2ListIndDer p c i li = PredListInd (tr2 Pos p i) c li ;
+  Pred2ListIndDer Pos p c i li = PredListInd (tr2 Pos p i) c li ;
+  Pred2ListIndDer Neg p c i li = PNeg (Pred2ListIndDer Pos p c i li) ;
 
 
 -- Transfer Partial Aplication of Pred2 with list of inds. 
--- Note this doesn't takes polarity parameter
-fun PartPred2ListInd : Pred2 -> Conj -> Ind -> [Ind] -> Prop ;
+fun PartPred2ListInd : Polarity -> Pred2 -> Conj -> Ind -> [Ind] -> Prop ;
 def
-  PartPred2ListInd p c i li = PredListInd (\ind -> tr1 Pos (PartPred p ind) i) c li ;
+  PartPred2ListInd Pos p c i li = PredListInd (\ind -> tr1 Pos (PartPred p ind) i) c li ;
+  PartPred2ListInd Neg p c i li = PNeg (PartPred2ListInd Pos p c i li) ;
 
 
 -- Transfer List of Pred1 (ej: A es rojo y verde)
--- Note this doesn't takes polarity parameter
-fun TransListPred1 : Conj -> [Pred1] -> Ind -> Prop ;
+fun TransListPred1 : Polarity -> Conj -> [Pred1] -> Ind -> Prop ;
 def
-  TransListPred1 c (BasePred1 p1 p2) i = PConj c (tr1 Pos p1 i) (tr1 Pos p2 i) ;
-  TransListPred1 c (ConsPred1 ph lp) i = PConj c (tr1 Pos ph i) (TransListPred1 c lp i) ;  
+  TransListPred1 Pos c (BasePred1 p1 p2) i = PConj c (tr1 Pos p1 i) (tr1 Pos p2 i) ;
+  TransListPred1 Pos c (ConsPred1 ph lp) i = PConj c (tr1 Pos ph i) (TransListPred1 Pos c lp i) ;
+  TransListPred1 Neg c lp i = PNeg (TransListPred1 Pos c lp i) ;
+
+
+-- Funciones para distribuir predicados binarios a lista de individuos
+fun distrBinPred : Pred2 -> Ind -> [Ind] -> Prop ;
+fun distrBin : Polarity -> Pred2 -> [Ind] -> Prop ;
+
+def
+  distrBinPred p x (BaseInd i1 i2) = PConj CAnd (PAtom (APred2 p x i1)) (PAtom (APred2 p x i2));
+  distrBinPred p x (ConsInd i1 li) = PConj CAnd (PAtom (APred2 p x i1)) (distrBinPred p x li) ;    
+
+  distrBin Pos p (BaseInd i1 i2) = PAtom (APred2 p i1 i2);
+  distrBin Pos p (ConsInd i1 li) = PConj CAnd (distrBinPred p i1 li) (distrBin Pos p li) ;
+  distrBin Neg p li = NegConj (distrBin Pos p li) ;
 -- End of auxiliar functions --
 
 
@@ -190,20 +203,20 @@ def
   TransAtom (PNegAtom (APred2 p (ConjInd c li) i)) = Pred2ListIndIzq Neg p c li i ;
 
   -- Lista de individuos a derecha
-  TransAtom (PAtom (APred2 p i (ConjInd c li))) = Pred2ListIndDer p c i li ;
-  TransAtom (PNegAtom (APred2 p i (ConjInd c li))) = PNeg (Pred2ListIndDer p c i li) ;
+  TransAtom (PAtom (APred2 p i (ConjInd c li))) = Pred2ListIndDer Pos p c i li ;
+  TransAtom (PNegAtom (APred2 p i (ConjInd c li))) = Pred2ListIndDer Neg p c i li ;
 
   -- Lista de individuos en Aplicación parcial de Pred2
-  TransAtom (PAtom (APred1 (PartPred p2 (ConjInd c li)) i)) = PartPred2ListInd p2 c i li ;  
-  TransAtom (PNegAtom (APred1 (PartPred p2 (ConjInd c li)) i)) = PNeg (PartPred2ListInd p2 c i li) ;  
+  TransAtom (PAtom (APred1 (PartPred p2 (ConjInd c li)) i)) = PartPred2ListInd Pos p2 c i li ;  
+  TransAtom (PNegAtom (APred1 (PartPred p2 (ConjInd c li)) i)) = PartPred2ListInd Neg p2 c i li ;  
 
   -- Conj de Pred1
-  TransAtom (PAtom (APred1 (ConjPred1 c lp) i)) = TransListPred1 c lp i ;
-  TransAtom (PNegAtom (APred1 (ConjPred1 c lp) i)) = PNeg (TransListPred1 c lp i) ;
+  TransAtom (PAtom (APred1 (ConjPred1 c lp) i)) = TransListPred1 Pos c lp i ;
+  TransAtom (PNegAtom (APred1 (ConjPred1 c lp) i)) = TransListPred1 Neg c lp i ;
 
   -- Distr Pred2
-  TransAtom (PAtom (APred2Distr p d li)) = distrBin p li;
-  TransAtom (PNegAtom (APred2Distr p d li)) = NegConj (distrBin p li);
+  TransAtom (PAtom (APred2Distr p d li)) = distrBin Pos p li;
+  TransAtom (PNegAtom (APred2Distr p d li)) = distrBin Neg p li;
 
   -- otherwise
   TransAtom pa = pa ;
