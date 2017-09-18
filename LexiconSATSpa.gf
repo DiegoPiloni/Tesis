@@ -24,15 +24,14 @@ lin
   Derecha = pred2_position (P.mkA2 (P.mkA "a la derecha" "a la derecha" "a la derecha" "a la derecha" "a la derecha" ) part_Prep) ;
   Abajo = pred2_position (P.mkA2 (P.mkA "abajo" "abajo" "abajo" "abajo" "abajo") part_Prep) ;
   Arriba = pred2_position (P.mkA2 (P.mkA "arriba" "arriba" "arriba" "arriba" "arriba") part_Prep) ;
-           
+
   -- Kind
-  Figura = mkCN (P.mkN "figura") ;
+  Figura = { pol = Pos ; n = mkCN (P.mkN "figura") ; a = mkAP (P.mkA " ") } ;
 
+  oper pred1_original : AP -> {t : Pred1Type ; pol : Pol1 ; s : AP } =
+       \ap -> { t = Original ; pol = Pos ; s = ap } ;
 
-  oper pred1_original : AP -> {t : Pred1Type ; s : AP } = 
-       \ap -> { t = Original ; s = ap } ;
-
-  oper pred2_position : A2 -> {t : Pred2Type ; s : A2 } = 
+  oper pred2_position : A2 -> {t : Pred2Type ; s : A2 } =
        \a2 -> {t = Position ; s = a2 } ;
-       
+
 }

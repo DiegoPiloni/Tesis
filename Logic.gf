@@ -28,27 +28,29 @@ data
   Equal : Pred2 ;                          -- x is equal to y
   Different : Pred2 ;                      -- x is different to y
 
+  -- Negate pred1 polarity
+  NegatedPred1 : Pred1 P -> Pred1 N ;
+
   -- Predicate application
-  APred1 : Pred1 -> Ind -> Atom ;           -- x is even
+  APred1 : Pred1 P -> Ind -> Atom ;           -- x is even
+  NPred1 : Pred1 N -> Ind -> Prop ;
+  --MPred1 : Pred1 m -> Ind -> Prop ;
   APred2 : Pred2 -> Ind -> Ind -> Atom ;    -- x is above y
 
   -- Function application
   IFun1  : Fun1 -> Ind -> Ind ;             -- the square of x
   IFun2  : Fun2 -> Ind -> Ind -> Ind ;      -- the sum of x and y
 
-
   -- Conjunctions
   CAnd, COr : Conj ;                        -- and, or
   sii_Conj : Conj ;                         -- if and only if
 
-
 -- Linguistic related constructions
 data
   PNegAtom  : Atom -> Prop ;                           -- x is not even
-  UnivIS  : Var -> Kind -> Pred1 -> Prop ;             -- (in situ) every number
-  ExistIS : Var -> Kind -> Pred1 -> Prop ;             -- (in situ) some number
-  ModKind : Kind -> Pred1 -> Kind ;                    -- even number (domain of quantification)
-
+  UnivIS  : Var -> Kind -> (pol : Pol) -> Pred1 pol -> Prop ;             -- (in situ) every number
+  ExistIS : Var -> Kind -> (pol : Pol) -> Pred1 pol -> Prop ;             -- (in situ) some number
+  ModKind : Kind -> (pol : Pol) -> Pred1 pol -> Kind ;                    -- even number (domain of quantification)
 
 -- Dependent types to allow distributive binary predicates
 fun
@@ -58,34 +60,36 @@ fun
 
 data
   -- Polimorfic conjunction
-  ConjPred1 : Conj -> [Pred1] -> Pred1 ;
+  ConjPred1 : Conj -> [Pred1 P] -> Pred1 P ;
+  NegPred1 : [Pred1 P] -> Pred1 N ;  -- solo se usa para conjunción negativa con ni
+  -- MixedPred1 : Pred1 p -> Pred1 n -> Pred1 m ;
+
   ConjInd : Conj -> [Ind] -> Ind ;
   PConjs : Conj -> [Prop] -> Prop ;
-  
+
   -- Partial application
-  PartPred : Pred2 -> Ind -> Pred1 ;
+  PartPred : Pred2 -> Ind -> Pred1 P ;
 
   -- Reflexividad en Pred2
   APredRefl : Pred2 -> Ind -> Atom ;
 
   -- Distributividad de Pred2
   APred2Distr : (p : Pred2) -> Distr p -> [Ind] -> Atom ;
-  
-  
+
   -- Cuantificación simbólica con lista de variables
   -- PQuants : Quant -> [Var] -> Prop -> Prop -> Prop ;
 
 
 -- Transfer functions --
-
+{-
 -- Main transfer function
 fun Transfer : Prop -> Prop ;
 def
-  Transfer (UnivIS v k p) = QuantIStoP (UnivIS v k p) ;
-  Transfer (ExistIS v k p) = QuantIStoP (ExistIS v k p) ;
-  Transfer (PAtom a) = TransAtom (PAtom a) ;
-  Transfer (PNegAtom a) = TransAtom (PNegAtom a) ;
-  Transfer (PConjs c lp) = TransPConjs (PConjs c lp) ;
+  Transfer (UnivIS v k pol p) = QuantIStoP (UnivIS v k pol p) ;
+  Transfer (ExistIS v k pol p) = QuantIStoP (ExistIS v k pol p) ;
+  -- Transfer (PAtom a) = TransAtom (PAtom a) ;
+  -- Transfer (PNegAtom a) = TransAtom (PNegAtom a) ;
+  -- Transfer (PConjs c lp) = TransPConjs (PConjs c lp) ;
 
 -- Auxiliar categories and functions --
 -- Category to diff polarity
@@ -103,7 +107,6 @@ def
 fun tr1 : Polarity -> Pred1 -> Ind -> Prop ;
 def
   tr1 pol p = tr pol (APred1 p);
-  
 
 -- Atomic Pred2 transfered
 fun tr2 : Polarity -> Pred2 -> Ind -> Ind -> Prop ;
@@ -116,7 +119,7 @@ def
 fun NegConj : Prop -> Prop ;
 def
   NegConj (PAtom a) = PNegAtom a;
-  NegConj (PNegAtom a) = PAtom a;  
+  NegConj (PNegAtom a) = PAtom a;
   NegConj (PConj c p1 p2) = PConj c (NegConj p1) (NegConj p2) ;
 
 
@@ -180,14 +183,14 @@ fun QuantIStoP : Prop -> Prop ;
 fun KindToProp : Kind -> Var -> Prop ;
 
 def
-  QuantIStoP (UnivIS v Figura p) = PQuant ForAll v True (tr1 Pos p (IVar v)) ;
-  QuantIStoP (UnivIS v k p) = PQuant ForAll v (KindToProp k v) (tr1 Pos p (IVar v)) ;
+  QuantIStoP (UnivIS v Figura pol p) = PQuant ForAll v True (tr1 Pos p (IVar v)) ;
+  QuantIStoP (UnivIS v k pol p) = PQuant ForAll v (KindToProp k v) (tr1 Pos p (IVar v)) ;
 
-  QuantIStoP (ExistIS v Figura p) = PQuant Exists v True (tr1 Pos p (IVar v)) ;
-  QuantIStoP (ExistIS v k p) = PQuant Exists v (KindToProp k v) (tr1 Pos p (IVar v)) ;
+  QuantIStoP (ExistIS v Figura pol p) = PQuant Exists v True (tr1 Pos p (IVar v)) ;
+  QuantIStoP (ExistIS v k pol p) = PQuant Exists v (KindToProp k v) (tr1 Pos p (IVar v)) ;
 
-  KindToProp (ModKind Figura pred) v = (tr1 Pos pred (IVar v)) ;
-  KindToProp (ModKind k pred) v = PConj CAnd (tr1 Pos pred (IVar v)) (KindToProp k v) ;
+  KindToProp (ModKind Figura pol p) v = tr1 Pos p (IVar v) ;
+  KindToProp (ModKind k pol p) v = PConj CAnd (tr1 Pos p (IVar v)) (KindToProp k v) ;
 
 
 -- Transfer function for atomic props. (Takes care of lists of inds/preds).
@@ -228,4 +231,5 @@ fun TransPConjs : Prop -> Prop ;
 def 
   TransPConjs (PConjs c (BaseProp p1 p2 )) = PConj c (Transfer p1) (Transfer p2) ;
   TransPConjs (PConjs c (ConsProp p lp)) = PConj c (Transfer p) (TransPConjs (PConjs c lp)) ;
+-}
 }
