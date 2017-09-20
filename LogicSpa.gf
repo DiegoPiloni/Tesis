@@ -31,7 +31,7 @@ lin
   -- Predicado unario como proposición atómica
   APred1 = appPred1 ;
 
-  NPred1 p x = mkS negativePol (appPred1 p x) ;
+  ANPred1 p x = mkS negativePol (appPred1 p x) ;
 
   -- Predicados binarios como proposicies atómicas
   APred2 p x y = case p.t of {
@@ -98,7 +98,7 @@ lin
   ConsPred1 _ p lp = mkListAP p.s lp ;
 
   ConjPred1 c lp = { t = Original ; pol = Pos ; s = mkAP c lp } ;
-  NegPred1 lp = { t = Original ; pol = Neg ; s = mkAP ni_Conj lp } ;
+  ConjNegPred1 lp = { t = Original ; pol = Neg ; s = mkAP ni_Conj lp } ;
   ConjInd = mkNP ;
 
 oper

@@ -275,3 +275,97 @@ Voy a seguir trabajando en estos días con estas ideas, más que nada 3)
 Estaría bueno si pueden leerlas antes de la próxima reunión. Yo este viernes estoy en Córdoba, así que si pueden juntarse, me vendría bárbaro.
 
 Saludos, y que anden bien !
+
+--------
+20/09/17
+
+Ahora Pred1 es un tipo dependiente de la polaridad.
+Por el momento polaridad solamente es Positiva (P) y Negativa (N). 
+Es decir, polaridad representada con el tipo Pol, se define como: Pol = P | N.
+Se puede ver la posibilidad de agregar una polaridad "mixta", que permita
+que una aplicación sea positiva y negativa.
+
+Luego el nuevo tipo usado en Logic.gf es Pred1 Pol.
+
+* Aplicación de predicados:
+
+Aplicación "positiva":
+
+APred1 : Pred1 P -> Ind -> Atom ;  -- igual que antes
+
+Aplicación "negativa":
+
+ANPred1 : Pred1 N -> Ind -> Prop
+
+La decisión de que ANPred1 devuelva una proposición descarta la posibilidad
+de negar mediante PNegAtom el resultado de ANPred1. (Notar que NPred1 ya devuelve
+una proposición negada)
+
+Frases parseadas con ANPred1:
+    - "A no es rojo"
+    - "A no es rojo ni grande"
+
+* Conjunción de Predicados
+
+Conjunción negativa:
+
+ConjPred1 : Conj -> [Pred1 P] -> Pred1 P ;  -- igual que antes
+
+Conjunción positiva:
+
+ConjNegPred1 : [Pred1 P] -> Pred1 N ;
+
+Solo se usa para conjunción negativa con "ni". 
+Que el resultado sea un Pred1 N evita aceptar frases como: "A es rojo ni grande".
+
+Frases que permite parsear:
+  - "A no es rojo ni grande" 
+  (Rojo ni grande es el Pred1 negativo, creado por ConjNegPred1)
+  También en cuantificación:
+    En rango:
+  - "cada figura que no es roja ni grande es cuadrada"
+    En término:
+  - "cada figura cuadrada no es roja ni grande" 
+     (Se podría modificar la gramática para aceptar también 
+      frases de la forma "cada figura que es cuadrada .. ")
+
+
+* Modificador de polaridad (Positivo a Negativo)
+
+NegatedPred1 : Pred1 P -> Pred1 N ;
+
+Util para poder aceptar negación sin "ni" en aplicación de predicados 
+(Esto ya se podía lograr antes con PNegAtom), y además, util para permitir negación 
+general (negación de un solo predicado, o más de uno con cada posible conjunción) 
+en rango y término de cuantificación.
+
+Frases que permite
+    En cuantificación: (Rango)
+    - "cada figura que no es roja es grande" (negación de Rojo)
+    - "cada figura que no es roja y cuadrada es grande" (negación de Rojo y Cuadrado)
+    En cuantificación (Término)
+    - "cada figura grande no es roja" (negación de Rojo)
+    - "cada figura grande no es roja y cuadrada" (negación de Rojo y Cuadrado)
+
+* Cuantificación con rango/término negado:
+
+UnivIS  : Var -> Kind -> (pol : Pol) -> Pred1 pol -> Prop ;
+ExistIS : Var -> Kind -> (pol : Pol) -> Pred1 pol -> Prop ;
+ModKind : Kind -> (pol : Pol) -> Pred1 pol -> Kind ;
+
+Los predicados que modifican Kind (rango), tanto como los del término,
+dependen de la polaridad.
+
+TODO:
+=====
+-> Hacer un script que permita testear automáticamente si un cierto 
+conjunto de frases se parsea y traduce de la forma deseada. Ver si se puede hacer
+mediante los comandos read_file y write_file de gf.
+-> Ver la posibilidad de agregar una polaridad "mixta", que permita
+que una aplicación sea positiva y negativa.
+-> Cosas que no se explican en este log:
+  * Funciones de transferencia para manipular el cambio de predicados con polaridad
+  * Cambio en LogicSpa y LogicSym
+
+Fin de log (20/09/17)
+--------

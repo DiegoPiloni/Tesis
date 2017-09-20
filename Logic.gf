@@ -33,7 +33,7 @@ data
 
   -- Predicate application
   APred1 : Pred1 P -> Ind -> Atom ;           -- x is even
-  NPred1 : Pred1 N -> Ind -> Prop ;
+  ANPred1 : Pred1 N -> Ind -> Prop ;
   --MPred1 : Pred1 m -> Ind -> Prop ;
   APred2 : Pred2 -> Ind -> Ind -> Atom ;    -- x is above y
 
@@ -61,7 +61,7 @@ fun
 data
   -- Polimorfic conjunction
   ConjPred1 : Conj -> [Pred1 P] -> Pred1 P ;
-  NegPred1 : [Pred1 P] -> Pred1 N ;  -- solo se usa para conjunción negativa con ni
+  ConjNegPred1 : [Pred1 P] -> Pred1 N ;  -- solo se usa para conjunción negativa con ni
   -- MixedPred1 : Pred1 p -> Pred1 n -> Pred1 m ;
 
   ConjInd : Conj -> [Ind] -> Ind ;
@@ -81,15 +81,16 @@ data
 
 
 -- Transfer functions --
-{-
+
 -- Main transfer function
 fun Transfer : Prop -> Prop ;
 def
   Transfer (UnivIS v k pol p) = QuantIStoP (UnivIS v k pol p) ;
   Transfer (ExistIS v k pol p) = QuantIStoP (ExistIS v k pol p) ;
-  -- Transfer (PAtom a) = TransAtom (PAtom a) ;
-  -- Transfer (PNegAtom a) = TransAtom (PNegAtom a) ;
-  -- Transfer (PConjs c lp) = TransPConjs (PConjs c lp) ;
+  Transfer (PAtom a) = TransAtom (PAtom a) ;
+  Transfer (PNegAtom a) = TransAtom (PNegAtom a) ;
+  Transfer (ANPred1 p i) = TransNegPred1 (ANPred1 p i) ;
+  Transfer (PConjs c lp) = TransPConjs (PConjs c lp) ;
 
 -- Auxiliar categories and functions --
 -- Category to diff polarity
@@ -104,7 +105,7 @@ def
 
 
 -- Atomic Pred1 transfered
-fun tr1 : Polarity -> Pred1 -> Ind -> Prop ;
+fun tr1 : Polarity -> Pred1 P -> Ind -> Prop ;
 def
   tr1 pol p = tr pol (APred1 p);
 
@@ -130,7 +131,7 @@ def
   PredListInd f c (ConsInd i li) = PConj c (f i) (PredListInd f c li) ;
 
 -- Transfer Pred1 with list of inds. (ej: A y B son rojos)
-fun Pred1ListInd : Polarity -> Pred1 -> Conj -> [Ind] -> Prop ;
+fun Pred1ListInd : Polarity -> Pred1 P -> Conj -> [Ind] -> Prop ;
 def 
   Pred1ListInd pol p c li = PredListInd (tr1 pol p) c li ;
 
@@ -157,10 +158,10 @@ def
 
 
 -- Transfer List of Pred1 (ej: A es rojo y verde)
-fun TransListPred1 : Polarity -> Conj -> [Pred1] -> Ind -> Prop ;
+fun TransListPred1 : Polarity -> Conj -> [Pred1 P] -> Ind -> Prop ;
 def
-  TransListPred1 Pos c (BasePred1 p1 p2) i = PConj c (tr1 Pos p1 i) (tr1 Pos p2 i) ;
-  TransListPred1 Pos c (ConsPred1 ph lp) i = PConj c (tr1 Pos ph i) (TransListPred1 Pos c lp i) ;
+  TransListPred1 Pos c (BasePred1 P p1 p2) i = PConj c (tr1 Pos p1 i) (tr1 Pos p2 i) ;
+  TransListPred1 Pos c (ConsPred1 P ph lp) i = PConj c (tr1 Pos ph i) (TransListPred1 Pos c lp i) ;
   TransListPred1 Neg c lp i = PNeg (TransListPred1 Pos c lp i) ;
 
 
@@ -178,19 +179,36 @@ def
 -- End of auxiliar functions --
 
 
+fun trNeg1 : Pred1 N -> Ind -> Prop ;
+def
+  trNeg1 (NegatedPred1 p) i = tr1 Neg p i ;
+  trNeg1 (ConjNegPred1 (BasePred1 P p1 p2)) i = PConj CAnd (tr1 Neg p1 i) (tr1 Neg p2 i) ;
+  trNeg1 (ConjNegPred1 (ConsPred1 P p lp)) i = PConj CAnd (tr1 Neg p i) (trNeg1 (ConjNegPred1 lp) i) ;
+
+fun TransNegPred1 : Prop -> Prop ;
+def
+  TransNegPred1 (ANPred1 p i) = trNeg1 p i ;
+
+
+-- tr1 or trNeg1 depending polarity
+fun tr1PoN : (pol : Pol) -> Pred1 pol -> Ind -> Prop ;
+def
+  tr1PoN P p = tr1 Pos p ;
+  tr1PoN N p = trNeg1 p ;
+
 -- Transfer functions for in-situ quantification
 fun QuantIStoP : Prop -> Prop ;
 fun KindToProp : Kind -> Var -> Prop ;
 
 def
-  QuantIStoP (UnivIS v Figura pol p) = PQuant ForAll v True (tr1 Pos p (IVar v)) ;
-  QuantIStoP (UnivIS v k pol p) = PQuant ForAll v (KindToProp k v) (tr1 Pos p (IVar v)) ;
+  QuantIStoP (UnivIS v Figura pol p) = PQuant ForAll v True ((tr1PoN pol p) (IVar v)) ;
+  QuantIStoP (UnivIS v k pol p) = PQuant ForAll v (KindToProp k v) ((tr1PoN pol p) (IVar v)) ;
 
-  QuantIStoP (ExistIS v Figura pol p) = PQuant Exists v True (tr1 Pos p (IVar v)) ;
-  QuantIStoP (ExistIS v k pol p) = PQuant Exists v (KindToProp k v) (tr1 Pos p (IVar v)) ;
+  QuantIStoP (ExistIS v Figura pol p) = PQuant Exists v True ((tr1PoN pol p) (IVar v)) ;
+  QuantIStoP (ExistIS v k pol p) = PQuant Exists v (KindToProp k v) ((tr1PoN pol p) (IVar v)) ;
 
-  KindToProp (ModKind Figura pol p) v = tr1 Pos p (IVar v) ;
-  KindToProp (ModKind k pol p) v = PConj CAnd (tr1 Pos p (IVar v)) (KindToProp k v) ;
+  KindToProp (ModKind Figura pol p) v = (tr1PoN pol p) (IVar v) ;
+  KindToProp (ModKind k pol p) v = PConj CAnd ((tr1PoN pol p) (IVar v)) (KindToProp k v) ;
 
 
 -- Transfer function for atomic props. (Takes care of lists of inds/preds).
@@ -231,5 +249,5 @@ fun TransPConjs : Prop -> Prop ;
 def 
   TransPConjs (PConjs c (BaseProp p1 p2 )) = PConj c (Transfer p1) (Transfer p2) ;
   TransPConjs (PConjs c (ConsProp p lp)) = PConj c (Transfer p) (TransPConjs (PConjs c lp)) ;
--}
+
 }
