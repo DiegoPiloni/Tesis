@@ -1,0 +1,11 @@
+(Rojo.A ∧ Rojo.B)
+(Rojo.A ∧ (Rojo.B ∧ Rojo.C))
+(Rojo.A ∧ Chico.A)
+(Rojo.A ∧ (Chico.A ∧ Cuad.A))
+(¬Rojo.A ∧ ¬Rojo.B)
+(¬Rojo.A ∧ (¬Rojo.B ∧ ¬Rojo.C))
+¬(Rojo.A ∧ Chico.A)
+¬(Rojo.A ∧ (Chico.A ∧ Cuad.A))
+(Rojo.A ∧ (Azul.B ∧ Verde.C))
+〈∃?1 : arriba.?1.A : Azul.?1 〉
+〈∃?1 : Rojo.?1 : arriba.?1.A 〉

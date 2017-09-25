@@ -369,3 +369,11 @@ que una aplicación sea positiva y negativa.
 
 Fin de log (20/09/17)
 --------
+
+25/09/17
+
+Creé un archivo 'script.gfs', junto con dos archivos 'in' y 'out'.
+'in' cuenta con frases en lenguaje natural que serán parseadas y luego linealizadas a fórmulas.
+'out' cuenta con las fórmulas correspondientes a una traducción correcta de cada frase de 'in'.
+Ejecutar 'gf < script.gfs' permite testear que las frases en español de 'in' se traducen correctamente,
+es decir, comparando la salida de la traducción en gf con las fórmulas escritas en 'out'.

@@ -1,0 +1,6 @@
+-- Correr desde el shell: gf < script.gfs
+i LogicSpa.gf LogicSym.gf
+rf -lines -file=in | p -lang=Spa | pt -transfer=Transfer | l -bind -lang=Sym | wf -file=aux
+! uniq aux > unique_aux
+! diff out unique_aux
+! rm aux unique_aux
