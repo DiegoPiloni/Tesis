@@ -372,8 +372,81 @@ Fin de log (20/09/17)
 
 25/09/17
 
-Creé un archivo 'script.gfs', junto con dos archivos 'in' y 'out'.
-'in' cuenta con frases en lenguaje natural que serán parseadas y luego linealizadas a fórmulas.
+- Creé un archivo 'script.gfs', junto con dos archivos 'in' y 'out'.
+'in' cuenta con frases en lenguaje natural que serán traducidas a fórmulas.
 'out' cuenta con las fórmulas correspondientes a una traducción correcta de cada frase de 'in'.
-Ejecutar 'gf < script.gfs' permite testear que las frases en español de 'in' se traducen correctamente,
+Ejecutar 'gf < script.gfs' permite testear que las frases de 'in' se traducen correctamente,
 es decir, comparando la salida de la traducción en gf con las fórmulas escritas en 'out'.
+
+16/10/17
+1) Se restringe conjunción de predicados de misma "Clase":
+Antes era una frase válida: "A es rojo y arriba de B"
+
+Para sólo permitir conjunción de predicados de misma Clase,
+agregué una nuevo tipo "Class". Pred1 y Pred2 ahora son dependientes
+de la Clase.
+
+Idealmente queremos:
+-- Conjunción de predicados de misma clase, devuelve predicados de esa clase.
+ConjPred1 : Conj -> (c : Class) -> [Pred1 P c] -> Pred1 P c ;
+
+Sin embargo, conseguí entender que la forma en que estaba intentando implementarlo
+no está soportada por GF.
+
+Mi idea:
+Linealizar Class con un tipo que no afecte a la linealización, usando `param`.
+    param ClassC = SerC | EstarC ;
+    lincat Class = ClassC ;
+
+Luego, hacer análisis por casos en la definición de sintáxis concreta, al estilo:
+    case c of {
+        SerC => "Generar frase con ser" -- Ej: A es rojo y grande
+        EstarC => "Generar frase con estar" -- Ej: A está arriba de B
+    }
+no funciona. Al parsear se permiten frases como "A es arriba de B".
+¿Qué esta pasando? Al parsear, como Class no lleva dentro de su linealización
+un String que sea usado, GF lo parsea con una metavariable,
+es decir, cualquier valor es posible.
+
+La justificación de por qué esto no es posible, está dada en:
+https://groups.google.com/forum/#!searchin/gf-dev/param$20as$20lincat%7Csort:relevance/gf-dev/EhNAiy0uO9Q/9m0X1nuOMwQJ
+
+¿Cómo resolví esto?
+
+Dupliqué ConjPred1 en:
+    ConjPred1Ser : Conj -> [Pred1 P Ser] -> Pred1 P Ser ;
+    ConjPred1Estar : Conj -> [Pred1 P Estar] -> Pred1 P Estar ;
+
+No es para mi gusto una buena solución, pero al menos es solución.
+
+2) Ahora se puede parsear cuantificación universal escribiendo "todas las figuras...".
+
+3) Ver en cuantificación:
+  todas las figuras (que están arriba de ..) Hecho
+  todas las figuras (que no están arriba de ..) Hecho
+
+4) Fix: 'si y solo si' estaba seteado como operador binario polimórfico, se podían parsear frases como:
+"A si y solo si B ..." de la misma forma que "A y B son rojos"
+Solución:
+De la misma manera que el implica, cree un nuevo constructor de Prop:
+PEquiv : Prop -> Prop -> Prop ;
+
+5) El jueves 5/10 mostré el trabajo a gente del grupo de PLN + Manu, buenas críticas :) Subo las slides,
+archivo: charla_tesis_pln.pdf
+
+6) Hice un formulario para recopilar datos, tuvo a mi parecer buen feedback. Hasta el momento, hay 32
+respuestas. Link: https://goo.gl/forms/PPpxlYn84aq5WUeB2.
+Sería interesante analizar (¿Cómo?) que 'estructuras de frases' están quedando afuera de la gramática 
+definida hasta el momento. Pienso que algunas se podrán hacer, otras quedarán como trabajo futuro.
+
+
+TODO: 
+* Hacer elipsis en conjunción:
+    A es rojo y [A] no es grande
+    A es rojo y [A] está arriba de B
+* Permitir empezar cuantificación sin "todas"/"alguna".
+    ej: A está arriba de todos los cuadrados.
+* Permitir cuantificación anidada:
+    ej: Todos los triangulos están arriba de algún círculo
+* Permitir que la forma también pueda ser un sustantivo.
+  En cuantificación: "Todos los cuadrados ... "

@@ -231,7 +231,7 @@ Ejemplo: she loves her
 
 ### Parallel multiple context free grammars
 
-GF usa internamente [Parallel multiple context free grammars (PMCFG)](http://www.sciencedirect.com/science/article/pii/030439759190374B), definidas como gramáticas ligeramente sensitivas al contexto. Lo que en GF puede pensarse de manera simple como gramáticas sobre tuplas. Un hecho interesante sobre PMCFG es que, al igual que las CGF, permite parsing polinomial. 
+GF usa internamente [Parallel multiple context free grammars (PMCFG)](http://aclweb.org/anthology/P93-1018), definidas como gramáticas ligeramente sensitivas al contexto. Lo que en GF puede pensarse de manera simple como gramáticas sobre tuplas. Un hecho interesante sobre PMCFG es que, al igual que las CGF, permite parsing polinomial. 
 
 ### Abstracción multilingüe
 

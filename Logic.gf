@@ -15,9 +15,10 @@ data
   PNeg   : Prop  -> Prop ;                  -- it is not the case that x is even
   PConj  : Conj  -> Prop -> Prop -> Prop ;  -- x is even and y is odd
   PImpl  : Prop  -> Prop -> Prop ;          -- if x is even then y is odd
+  PEquiv : Prop -> Prop -> Prop ;           -- p if and only if q
 
-  -- < Qx : R.x : T.x >
-  PQuant  : Quant -> Var -> Prop -> Prop -> Prop ;  -- for all number x, x is even
+  -- Transfer (PImpl p q) = PImpl (Transfer p) (Transfer q) ; < Qx : R.x : T.x >
+  PQuant  : Quant -> Var -> Prop -> Prop -> Prop ;
 
   -- Variables are strings
   VString : String -> Var ;                 -- "x"
@@ -25,17 +26,18 @@ data
   IVar   : Var -> Ind ;                     -- "x"
 
   -- Basic binary predicates
-  Equal : Pred2 ;                          -- x is equal to y
-  Different : Pred2 ;                      -- x is different to y
-
-  -- Negate pred1 polarity
-  NegatedPred1 : Pred1 P -> Pred1 N ;
+  Equal : Pred2 Ser ;                          -- x is equal to y
+  Different : Pred2 Ser ;                      -- x is different to y
 
   -- Predicate application
-  APred1 : Pred1 P -> Ind -> Atom ;           -- x is even
-  ANPred1 : Pred1 N -> Ind -> Prop ;
-  --MPred1 : Pred1 m -> Ind -> Prop ;
-  APred2 : Pred2 -> Ind -> Ind -> Atom ;    -- x is above y
+  APred1 : (c : Class) -> Pred1 P c -> Ind -> Atom ;  -- x is even
+  ANPred1 : (c : Class) -> Pred1 N c -> Ind -> Prop ;
+  -- MPred1 : Pred1 m -> Ind -> Prop ; -- mixed Pred1 polarity?
+
+  APred2 : (c : Class) -> Pred2 c -> Ind -> Ind -> Atom ;    -- x is above y
+
+  -- Negate pred1 polarity
+  NegatedPred1 : (c : Class) -> Pred1 P c -> Pred1 N c ;
 
   -- Function application
   IFun1  : Fun1 -> Ind -> Ind ;             -- the square of x
@@ -43,38 +45,48 @@ data
 
   -- Conjunctions
   CAnd, COr : Conj ;                        -- and, or
-  sii_Conj : Conj ;                         -- if and only if
 
 -- Linguistic related constructions
 data
-  PNegAtom  : Atom -> Prop ;                           -- x is not even
-  UnivIS  : Var -> Kind -> (pol : Pol) -> Pred1 pol -> Prop ;             -- (in situ) every number
-  ExistIS : Var -> Kind -> (pol : Pol) -> Pred1 pol -> Prop ;             -- (in situ) some number
-  ModKind : Kind -> (pol : Pol) -> Pred1 pol -> Kind ;                    -- even number (domain of quantification)
+  PNegAtom  : Atom -> Prop ;  -- x is not even
+  UnivIS  : Var -> (ck : ClassK) -> Kind ck -> (c : Class) -> (pol : Pol) -> Pred1 pol c -> Prop ;              -- (in situ) every number
+  ExistIS : Var -> (ck : ClassK) -> Kind ck -> (c : Class) -> (pol : Pol) -> Pred1 pol c -> Prop ;              -- (in situ) some number
+  ModKind : Kind Fig -> (c : Class) -> (pol : Pol) -> Pred1 pol c -> (ck : ClassK) -> ToKind c ck -> Kind ck ;  -- even number (domain of quantification)
 
 -- Dependent types to allow distributive binary predicates
 fun
-  distr_equal : Distr Equal ;
-  distr_diff : Distr Different ;
+  distr_equal : Distr Ser Equal ;
+  distr_diff : Distr Ser Different ;
 
+-- Dependent types to define possible modifications of Kind.
+fun
+  toSerK : ToKind Ser SerK ;
+  toEstarK : ToKind Estar EstarK ;
 
 data
+  {-
+  ConjPred1 : Conj -> (c : Class) -> [Pred1 P c] -> Pred1 P c ;
+  ConjNegPred1 : (c : Class) -> [Pred1 P c] -> Pred1 N c ;  -- solo se usa para conjunción negativa con ni
+  -}
   -- Polimorfic conjunction
-  ConjPred1 : Conj -> [Pred1 P] -> Pred1 P ;
-  ConjNegPred1 : [Pred1 P] -> Pred1 N ;  -- solo se usa para conjunción negativa con ni
+  ConjPred1Ser : Conj -> [Pred1 P Ser] -> Pred1 P Ser ;
+  ConjPred1Estar : Conj -> [Pred1 P Estar] -> Pred1 P Estar ;
+  -- ConjNeg solo se usa para conjunción negativa con ni
+  ConjNegPred1Ser : [Pred1 P Ser] -> Pred1 N Ser ;
+  ConjNegPred1Estar : [Pred1 P Estar] -> Pred1 N Estar ;
   -- MixedPred1 : Pred1 p -> Pred1 n -> Pred1 m ;
 
   ConjInd : Conj -> [Ind] -> Ind ;
   PConjs : Conj -> [Prop] -> Prop ;
 
   -- Partial application
-  PartPred : Pred2 -> Ind -> Pred1 P ;
+  PartPred : (c : Class) -> Pred2 c -> Ind -> Pred1 P c ;
 
   -- Reflexividad en Pred2
-  APredRefl : Pred2 -> Ind -> Atom ;
+  APredRefl : (c : Class) -> Pred2 c -> Ind -> Atom ;
 
   -- Distributividad de Pred2
-  APred2Distr : (p : Pred2) -> Distr p -> [Ind] -> Atom ;
+  APred2Distr : (c : Class) -> (p : Pred2 c) -> Distr c p -> [Ind] -> Atom ;
 
   -- Cuantificación simbólica con lista de variables
   -- PQuants : Quant -> [Var] -> Prop -> Prop -> Prop ;
@@ -85,11 +97,11 @@ data
 -- Main transfer function
 fun Transfer : Prop -> Prop ;
 def
-  Transfer (UnivIS v k pol p) = QuantIStoP (UnivIS v k pol p) ;
-  Transfer (ExistIS v k pol p) = QuantIStoP (ExistIS v k pol p) ;
+  Transfer (UnivIS v ck k cl pol p) = QuantIStoP (UnivIS v ck k cl pol p) ;
+  Transfer (ExistIS v ck k cl pol p) = QuantIStoP (ExistIS v ck k cl pol p) ;
   Transfer (PAtom a) = TransAtom (PAtom a) ;
   Transfer (PNegAtom a) = TransAtom (PNegAtom a) ;
-  Transfer (ANPred1 p i) = TransNegPred1 (ANPred1 p i) ;
+  Transfer (ANPred1 cl p i) = TransNegPred1 (ANPred1 cl p i) ;
   Transfer (PConjs c lp) = TransPConjs (PConjs c lp) ;
 
 -- Auxiliar categories and functions --
@@ -105,14 +117,14 @@ def
 
 
 -- Atomic Pred1 transfered
-fun tr1 : Polarity -> Pred1 P -> Ind -> Prop ;
+fun tr1 : Polarity -> (cl : Class) -> Pred1 P cl -> Ind -> Prop ;
 def
-  tr1 pol p = tr pol (APred1 p);
+  tr1 pol cl p = tr pol (APred1 cl p);
 
 -- Atomic Pred2 transfered
-fun tr2 : Polarity -> Pred2 -> Ind -> Ind -> Prop ;
+fun tr2 : Polarity -> (cl : Class) -> Pred2 cl -> Ind -> Ind -> Prop ;
 def
-  tr2 pol p i1 = tr pol (APred2 p i1) ;
+  tr2 pol cl p i1 = tr pol (APred2 cl p i1) ;
 
 
 -- Distribuye la negación, sin modificar el operador de conjunción.
@@ -131,113 +143,117 @@ def
   PredListInd f c (ConsInd i li) = PConj c (f i) (PredListInd f c li) ;
 
 -- Transfer Pred1 with list of inds. (ej: A y B son rojos)
-fun Pred1ListInd : Polarity -> Pred1 P -> Conj -> [Ind] -> Prop ;
+fun Pred1ListInd : Polarity -> (cl : Class) -> Pred1 P cl -> Conj -> [Ind] -> Prop ;
 def 
-  Pred1ListInd pol p c li = PredListInd (tr1 pol p) c li ;
+  Pred1ListInd pol cl p c li = PredListInd (tr1 pol cl p) c li ;
 
 
 -- Transfer Pred2 with list of inds (Izquierda). (ej: A y B están arriba de C)
-fun Pred2ListIndIzq : Polarity -> Pred2 -> Conj -> [Ind] -> Ind -> Prop ;
+fun Pred2ListIndIzq : Polarity -> (cl : Class) -> Pred2 cl -> Conj -> [Ind] -> Ind -> Prop ;
 def
-  Pred2ListIndIzq pol p c (BaseInd i1 i2) i = PConj c (tr2 pol p i1 i) (tr2 pol p i2 i) ;
-  Pred2ListIndIzq pol p c li i = PredListInd (\ind -> tr2 pol p ind i) c li ;
+  Pred2ListIndIzq pol cl p c (BaseInd i1 i2) i = PConj c (tr2 pol cl p i1 i) (tr2 pol cl p i2 i) ;
+  Pred2ListIndIzq pol cl p c li i = PredListInd (\ind -> tr2 pol cl p ind i) c li ;
 
 
 -- Transfer Pred2 with list of inds (Derecha). (ej: A está arriba de B y C)
-fun Pred2ListIndDer : Polarity -> Pred2 -> Conj -> Ind -> [Ind] -> Prop ;
+fun Pred2ListIndDer : Polarity -> (cl : Class) -> Pred2 cl -> Conj -> Ind -> [Ind] -> Prop ;
 def
-  Pred2ListIndDer Pos p c i li = PredListInd (tr2 Pos p i) c li ;
-  Pred2ListIndDer Neg p c i li = PNeg (Pred2ListIndDer Pos p c i li) ;
+  Pred2ListIndDer Pos cl p c i li = PredListInd (tr2 Pos cl p i) c li ;
+  Pred2ListIndDer Neg cl p c i li = PNeg (Pred2ListIndDer Pos cl p c i li) ;
 
 
 -- Transfer Partial Aplication of Pred2 with list of inds. 
-fun PartPred2ListInd : Polarity -> Pred2 -> Conj -> Ind -> [Ind] -> Prop ;
+fun PartPred2ListInd : Polarity -> (cl : Class) -> Pred2 cl -> Conj -> Ind -> [Ind] -> Prop ;
 def
-  PartPred2ListInd Pos p c i li = PredListInd (\ind -> tr1 Pos (PartPred p ind) i) c li ;
-  PartPred2ListInd Neg p c i li = PNeg (PartPred2ListInd Pos p c i li) ;
+  PartPred2ListInd Pos cl p c i li = PredListInd (\ind -> tr1 Pos cl (PartPred cl p ind) i) c li ;
+  PartPred2ListInd Neg cl p c i li = PNeg (PartPred2ListInd Pos cl p c i li) ;
 
 
 -- Transfer List of Pred1 (ej: A es rojo y verde)
-fun TransListPred1 : Polarity -> Conj -> [Pred1 P] -> Ind -> Prop ;
+fun TransListPred1 : Polarity -> Conj -> (cl : Class) -> [Pred1 P cl] -> Ind -> Prop ;
 def
-  TransListPred1 Pos c (BasePred1 P p1 p2) i = PConj c (tr1 Pos p1 i) (tr1 Pos p2 i) ;
-  TransListPred1 Pos c (ConsPred1 P ph lp) i = PConj c (tr1 Pos ph i) (TransListPred1 Pos c lp i) ;
-  TransListPred1 Neg c lp i = PNeg (TransListPred1 Pos c lp i) ;
+  TransListPred1 Pos c _ (BasePred1 P cl p1 p2) i = PConj c (tr1 Pos cl p1 i) (tr1 Pos cl p2 i) ;
+  TransListPred1 Pos c _ (ConsPred1 P cl ph lp) i = PConj c (tr1 Pos cl ph i) (TransListPred1 Pos c cl lp i) ;
+  TransListPred1 Neg c cl lp i = PNeg (TransListPred1 Pos c cl lp i) ;
 
 
 -- Funciones para distribuir predicados binarios a lista de individuos
-fun distrBinPred : Pred2 -> Ind -> [Ind] -> Prop ;
-fun distrBin : Polarity -> Pred2 -> [Ind] -> Prop ;
+fun distrBinPred : (cl : Class) -> Pred2 cl -> Ind -> [Ind] -> Prop ;
+fun distrBin : Polarity -> (cl : Class) -> Pred2 cl -> [Ind] -> Prop ;
 
 def
-  distrBinPred p x (BaseInd i1 i2) = PConj CAnd (PAtom (APred2 p x i1)) (PAtom (APred2 p x i2));
-  distrBinPred p x (ConsInd i1 li) = PConj CAnd (PAtom (APred2 p x i1)) (distrBinPred p x li) ;    
+  distrBinPred cl p x (BaseInd i1 i2) = PConj CAnd (PAtom (APred2 cl p x i1)) (PAtom (APred2 cl p x i2));
+  distrBinPred cl p x (ConsInd i1 li) = PConj CAnd (PAtom (APred2 cl p x i1)) (distrBinPred cl p x li) ;    
 
-  distrBin Pos p (BaseInd i1 i2) = PAtom (APred2 p i1 i2);
-  distrBin Pos p (ConsInd i1 li) = PConj CAnd (distrBinPred p i1 li) (distrBin Pos p li) ;
-  distrBin Neg p li = NegConj (distrBin Pos p li) ;
+  distrBin Pos cl p (BaseInd i1 i2) = PAtom (APred2 cl p i1 i2);
+  distrBin Pos cl p (ConsInd i1 li) = PConj CAnd (distrBinPred cl p i1 li) (distrBin Pos cl p li) ;
+  distrBin Neg cl p li = NegConj (distrBin Pos cl p li) ;
 -- End of auxiliar functions --
 
 
-fun trNeg1 : Pred1 N -> Ind -> Prop ;
+fun trNeg1 : (cl : Class) -> Pred1 N cl -> Ind -> Prop ;
 def
-  trNeg1 (NegatedPred1 p) i = tr1 Neg p i ;
-  trNeg1 (ConjNegPred1 (BasePred1 P p1 p2)) i = PConj CAnd (tr1 Neg p1 i) (tr1 Neg p2 i) ;
-  trNeg1 (ConjNegPred1 (ConsPred1 P p lp)) i = PConj CAnd (tr1 Neg p i) (trNeg1 (ConjNegPred1 lp) i) ;
+  trNeg1 cl (NegatedPred1 cl p) i = tr1 Neg cl p i ;
+  trNeg1 Ser (ConjNegPred1Ser (BasePred1 P Ser p1 p2)) i = PConj CAnd (tr1 Neg Ser p1 i) (tr1 Neg Ser p2 i) ;
+  trNeg1 Ser (ConjNegPred1Ser (ConsPred1 P Ser p lp)) i = PConj CAnd (tr1 Neg Ser p i) (trNeg1 Ser (ConjNegPred1Ser lp) i) ;
+  trNeg1 Estar (ConjNegPred1Estar (BasePred1 P Estar p1 p2)) i = PConj CAnd (tr1 Neg Estar p1 i) (tr1 Neg Estar p2 i) ;
+  trNeg1 Estar (ConjNegPred1Estar (ConsPred1 P Estar p lp)) i = PConj CAnd (tr1 Neg Estar p i) (trNeg1 Estar (ConjNegPred1Estar lp) i) ;
 
 fun TransNegPred1 : Prop -> Prop ;
 def
-  TransNegPred1 (ANPred1 p i) = trNeg1 p i ;
+  TransNegPred1 (ANPred1 cl p i) = trNeg1 cl p i ;
 
 
 -- tr1 or trNeg1 depending polarity
-fun tr1PoN : (pol : Pol) -> Pred1 pol -> Ind -> Prop ;
+fun tr1PoN : (pol : Pol) -> (cl : Class) -> Pred1 pol cl -> Ind -> Prop ;
 def
-  tr1PoN P p = tr1 Pos p ;
-  tr1PoN N p = trNeg1 p ;
+  tr1PoN P cl p = tr1 Pos cl p ;
+  tr1PoN N cl p = trNeg1 cl p ;
 
 -- Transfer functions for in-situ quantification
 fun QuantIStoP : Prop -> Prop ;
-fun KindToProp : Kind -> Var -> Prop ;
+fun KindToProp : (ck : ClassK) -> Kind ck -> Var -> Prop ;
 
 def
-  QuantIStoP (UnivIS v Figura pol p) = PQuant ForAll v True ((tr1PoN pol p) (IVar v)) ;
-  QuantIStoP (UnivIS v k pol p) = PQuant ForAll v (KindToProp k v) ((tr1PoN pol p) (IVar v)) ;
+  QuantIStoP (UnivIS v ck Figura cl pol p) = PQuant ForAll v True ((tr1PoN pol cl p) (IVar v)) ;
+  QuantIStoP (UnivIS v ck k cl pol p) = PQuant ForAll v (KindToProp ck k v) ((tr1PoN pol cl p) (IVar v)) ;
 
-  QuantIStoP (ExistIS v Figura pol p) = PQuant Exists v True ((tr1PoN pol p) (IVar v)) ;
-  QuantIStoP (ExistIS v k pol p) = PQuant Exists v (KindToProp k v) ((tr1PoN pol p) (IVar v)) ;
+  QuantIStoP (ExistIS v ck Figura cl pol p) = PQuant Exists v True ((tr1PoN pol cl p) (IVar v)) ;
+  QuantIStoP (ExistIS v ck k cl pol p) = PQuant Exists v (KindToProp ck k v) ((tr1PoN pol cl p) (IVar v)) ;
 
-  KindToProp (ModKind Figura pol p) v = (tr1PoN pol p) (IVar v) ;
-  KindToProp (ModKind k pol p) v = PConj CAnd ((tr1PoN pol p) (IVar v)) (KindToProp k v) ;
+  KindToProp ck (ModKind Figura pol cl p _ _) v = (tr1PoN cl pol p) (IVar v) ;
+  -- KindToProp ck (ModKind k pol cl p) v = PConj CAnd ((tr1PoN cl pol p) (IVar v)) (KindToProp Ser k v) ;
 
 
 -- Transfer function for atomic props. (Takes care of lists of inds/preds).
 fun TransAtom : Prop -> Prop ;
 def
   -- Lista de individuos en Pred1
-  TransAtom (PAtom (APred1 p (ConjInd c li))) = Pred1ListInd Pos p c li ;
-  TransAtom (PNegAtom (APred1 p (ConjInd c li))) = Pred1ListInd Neg p c li ;
+  TransAtom (PAtom (APred1 cl p (ConjInd c li))) = Pred1ListInd Pos cl p c li ;
+  TransAtom (PNegAtom (APred1 cl p (ConjInd c li))) = Pred1ListInd Neg cl p c li ;
 
   -- Lista de individuos en Pred2 --
   -- Lista de individuos a izquierda
-  TransAtom (PAtom (APred2 p (ConjInd c li) i)) = Pred2ListIndIzq Pos p c li i ;
-  TransAtom (PNegAtom (APred2 p (ConjInd c li) i)) = Pred2ListIndIzq Neg p c li i ;
+  TransAtom (PAtom (APred2 cl p (ConjInd c li) i)) = Pred2ListIndIzq Pos cl p c li i ;
+  TransAtom (PNegAtom (APred2 cl p (ConjInd c li) i)) = Pred2ListIndIzq Neg cl p c li i ;
 
   -- Lista de individuos a derecha
-  TransAtom (PAtom (APred2 p i (ConjInd c li))) = Pred2ListIndDer Pos p c i li ;
-  TransAtom (PNegAtom (APred2 p i (ConjInd c li))) = Pred2ListIndDer Neg p c i li ;
+  TransAtom (PAtom (APred2 cl p i (ConjInd c li))) = Pred2ListIndDer Pos cl p c i li ;
+  TransAtom (PNegAtom (APred2 cl p i (ConjInd c li))) = Pred2ListIndDer Neg cl p c i li ;
 
   -- Lista de individuos en Aplicación parcial de Pred2
-  TransAtom (PAtom (APred1 (PartPred p2 (ConjInd c li)) i)) = PartPred2ListInd Pos p2 c i li ;  
-  TransAtom (PNegAtom (APred1 (PartPred p2 (ConjInd c li)) i)) = PartPred2ListInd Neg p2 c i li ;  
+  TransAtom (PAtom (APred1 _ (PartPred cl p2 (ConjInd c li)) i)) = PartPred2ListInd Pos cl p2 c i li ;  
+  TransAtom (PNegAtom (APred1 _ (PartPred cl p2 (ConjInd c li)) i)) = PartPred2ListInd Neg cl p2 c i li ;  
 
   -- Conj de Pred1
-  TransAtom (PAtom (APred1 (ConjPred1 c lp) i)) = TransListPred1 Pos c lp i ;
-  TransAtom (PNegAtom (APred1 (ConjPred1 c lp) i)) = TransListPred1 Neg c lp i ;
+  TransAtom (PAtom (APred1 Ser (ConjPred1Ser c lp) i)) = TransListPred1 Pos c Ser lp i ;
+  TransAtom (PNegAtom (APred1 Ser (ConjPred1Ser c lp) i)) = TransListPred1 Neg c Ser lp i ;
+  TransAtom (PAtom (APred1 Estar (ConjPred1Estar c lp) i)) = TransListPred1 Pos c Estar lp i ;
+  TransAtom (PNegAtom (APred1 Estar (ConjPred1Estar c lp) i)) = TransListPred1 Neg c Estar lp i ;
 
   -- Distr Pred2
-  TransAtom (PAtom (APred2Distr p d li)) = distrBin Pos p li;
-  TransAtom (PNegAtom (APred2Distr p d li)) = distrBin Neg p li;
+  TransAtom (PAtom (APred2Distr cl p d li)) = distrBin Pos cl p li;
+  TransAtom (PNegAtom (APred2Distr cl p d li)) = distrBin Neg cl p li;
 
   -- otherwise
   TransAtom pa = pa ;
@@ -247,7 +263,7 @@ def
 fun TransPConjs : Prop -> Prop ;
 
 def 
-  TransPConjs (PConjs c (BaseProp p1 p2 )) = PConj c (Transfer p1) (Transfer p2) ;
-  TransPConjs (PConjs c (ConsProp p lp)) = PConj c (Transfer p) (TransPConjs (PConjs c lp)) ;
+  TransPConjs (PConjs c (BaseProp p1 p2)) = Transfer (PConj c p1 p2) ;
+  TransPConjs (PConjs c (ConsProp p lp)) = Transfer (PConj c p (TransPConjs (PConjs c lp))) ;
 
 }

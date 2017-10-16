@@ -5,11 +5,13 @@ concrete CategoriesSpa of Categories = open
 param Pred2Type = Equality | Inequality | Position ;
 param Pred1Type = Original | PA Pred2Type ;
 param Pol1 = Pos | Neg ;
+param ClassC = SerC | EstarC ;
+param ClassCK = SerCK | EstarCK | FigC ;
 param QuantP = Exist | ForAll ;
 
-oper KindT : Type = { pol : Pol1 ; n : CN ; a : AP } ;
-oper Pred1T : Type = { t : Pred1Type ; pol : Pol1 ; s : AP } ;
-oper Pred2T : Type = { t : Pred2Type ; s : A2 } ;
+oper KindT : Type = { cl : ClassCK ; pol : Pol1 ; n : CN ; a : AP } ;
+oper Pred1T : Type = { cl : ClassC ; pol : Pol1 ; s : AP } ;
+oper Pred2T : Type = { cl : ClassC ; s : A2 } ;
 
 lincat
   Prop = S ;
@@ -28,4 +30,7 @@ lincat
   [Var] = NP ;
   Distr = {} ;
   Pol = {} ;
+  Class = {} ;
+  ClassK = {} ;
+  ToKind = {} ;
 }

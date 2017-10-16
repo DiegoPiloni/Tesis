@@ -26,12 +26,12 @@ lin
   Arriba = pred2_position (P.mkA2 (P.mkA "arriba" "arriba" "arriba" "arriba" "arriba") part_Prep) ;
 
   -- Kind
-  Figura = { pol = Pos ; n = mkCN (P.mkN "figura") ; a = mkAP (P.mkA " ") } ;
+  Figura = { cl = FigC ; pol = Pos ; n = mkCN (P.mkN "figura") ; a = mkAP (P.mkA " ") } ;
 
-  oper pred1_original : AP -> {t : Pred1Type ; pol : Pol1 ; s : AP } =
-       \ap -> { t = Original ; pol = Pos ; s = ap } ;
+  oper pred1_original : AP -> Pred1T =
+       \ap -> { cl = SerC ; pol = Pos ; s = ap } ;
 
-  oper pred2_position : A2 -> {t : Pred2Type ; s : A2 } =
-       \a2 -> {t = Position ; s = a2 } ;
+  oper pred2_position : A2 -> Pred2T =
+       \a2 -> { cl = EstarC ; s = a2 } ;
 
 }

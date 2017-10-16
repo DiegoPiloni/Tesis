@@ -7,14 +7,15 @@ lin
   PNeg = negate ;
   PConj = bin_op ;
   PImpl = bin_op "⇒" ;
+  PEquiv = bin_op "≡" ;
   PQuant = quant ;
-  APred1 = appPred1 ;
-  ANPred1 p x = negate (appPred1 p x) ;
-  APred2 = appPred2 ;
-  NegatedPred1 p = p ;
+  APred1 _ = appPred1 ;
+  ANPred1 _ p x = negate (appPred1 p x) ;
+  APred2 _ = appPred2 ;
+  NegatedPred1 _ p = p ;
 
   IVar = idS ;
-  Equal = {t = Equality ; s = "=" } ;
+  Equal = { t = Equality ; s = "=" } ;
   Different = { t = Inequality ; s = "=" } ;
 
   IFun1 f x = glue f (parentesis x) ;
@@ -24,7 +25,6 @@ lin
 
   CAnd = "∧" ;
   COr = "∨" ;
-  sii_Conj = "≡" ;
 
   True = "True" ;
   False = "False" ;
@@ -34,8 +34,8 @@ lin
 
 lin
   PNegAtom = negate ;
-  PartPred p i = { t = PA p.t ; symb = p.s ; ind = i } ;
-  APredRefl p i = appPred2 p i i ;
+  PartPred _ p i = { t = PA p.t ; symb = p.s ; ind = i } ;
+  APredRefl _ p i = appPred2 p i i ;
 
   -- No se linealiza Kind a lenguaje simbólico
   -- No se linealiza QuantIS a lenguaje simbólico

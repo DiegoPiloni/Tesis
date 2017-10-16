@@ -10,4 +10,5 @@ lincat
   Prop, Atom, Var, Conj, Quant, Ind, Fun1, Fun2 = Str ;
   Pred1 = Pred1T ;
   Pred2 = Pred2T ;
+  Class = {} ;
 }

@@ -24,20 +24,19 @@ lin
   -- Implicación de dos proposiciones
   PImpl p q = mkS (mkAdv if_Subj p) (mkS then_Adv q) ;
 
+  -- Equivalencia de dos proposiciones
+  PEquiv = mkS sii_Conj ;
 
   -- Pred1 Negado
-  NegatedPred1 p = {t = p.t ; pol = Neg ; s = p.s } ;
+  NegatedPred1 _ p = { cl = p.cl ; pol = Neg ; s = p.s } ;
 
   -- Predicado unario como proposición atómica
-  APred1 = appPred1 ;
+  APred1 _ p x = appPred1 p x ;
 
-  ANPred1 p x = mkS negativePol (appPred1 p x) ;
+  ANPred1 _ p x = mkS negativePol (appPred1 p x) ;
 
   -- Predicados binarios como proposicies atómicas
-  APred2 p x y = case p.t of {
-                   Position => mkCl x (E.UseComp_estar (mkComp (mkAP p.s y))) ;
-                   _ => mkCl x p.s y
-                 } ;
+  APred2 _ p x y = appPred2 p x y ;
 
   -- no se parsean frases de la forma "para todo x, x es rojo".
   -- PUniv v p = mkS (mkAdv for_Prep (mkNP all_Predet (mkNP (SymbPN v)))) p ;
@@ -47,8 +46,8 @@ lin
 
   IVar x = mkNP (SymbPN x) ;
 
-  Equal = { t = Equality ; s = P.mkA2 (P.mkA "igual") to_Prep } ;
-  Different = { t = Inequality ; s = P.mkA2 (P.mkA ("diferente" | "distinto")) part_Prep } ;
+  Equal = { cl = SerC ; s = P.mkA2 (P.mkA "igual") to_Prep } ;
+  Different = { cl = SerC ; s = P.mkA2 (P.mkA ("diferente" | "distinto")) part_Prep } ;
 
 
   IFun1 f = app f ;
@@ -59,26 +58,25 @@ lin
   -- Conjunciones
   CAnd = and_Conj ;
   COr = or_Conj ;
-  sii_Conj = MS.mkConj "" "si y solo si" P.singular ;
 
 -- extension con Kind
 
 lin
-  -- AKind k x = mkCl x k ;
   PNegAtom = mkS negativePol ;
-  PartPred p i = {t = PA p.t ; pol = Pos ; s = mkAP p.s i } ;
-  APredRefl p i = case p.t of {
-                    Position => mkCl i (E.UseComp_estar (mkComp (reflAP p.s))) ;
-                    _ => mkCl i (reflAP p.s)
-                  } ;
+  PartPred _ p i = { cl = p.cl ; pol = Pos ; s = mkAP p.s i } ;
 
-  APred2Distr p _ inds = mkCl (mkNP and_Conj inds) (mkAP p.s) ;
+  APredRefl _ p i = case p.cl of {
+    SerC => mkCl i (reflAP p.s) ;
+    EstarC => mkCl i (E.UseComp_estar (mkComp (reflAP p.s)))
+  } ;
 
-  UnivIS _ k _ p = mkQuantIS ForAll k p ;
+  APred2Distr _ p _ inds = mkCl (mkNP and_Conj inds) (mkAP p.s) ;
 
-  ExistIS _ k _ p = mkQuantIS Exist k p ;
+  UnivIS _ _ k _ _ p = mkQuantIS ForAll k p ;
 
-  ModKind k _ m = { pol = m.pol ; n = k.n ; a = m.s } ;
+  ExistIS _ _ k _ _ p = mkQuantIS Exist k p ;
+
+  ModKind k _ _ m _ _ = { cl = classCtoCK m.cl ; pol = m.pol ; n = k.n ; a = m.s } ;
 
 -- extension conjunción polimórfica
 lin
@@ -94,21 +92,36 @@ lin
   BaseInd = mkListNP ;
   ConsInd = mkListNP ;
 
-  BasePred1 _ p1 p2 = mkListAP p1.s p2.s ;
-  ConsPred1 _ p lp = mkListAP p.s lp ;
+  BasePred1 _ _ p1 p2 = mkListAP p1.s p2.s ;
+  ConsPred1 _ _ p lp = mkListAP p.s lp ;
 
-  ConjPred1 c lp = { t = Original ; pol = Pos ; s = mkAP c lp } ;
-  ConjNegPred1 lp = { t = Original ; pol = Neg ; s = mkAP ni_Conj lp } ;
+  ConjPred1Ser c lp = { cl = SerC ; pol = Pos ; s = mkAP c lp } ;
+  ConjPred1Estar c lp = { cl = EstarC ; pol = Pos ; s = mkAP c lp } ;
+  ConjNegPred1Ser lp = { cl = SerC ; pol = Neg ; s = mkAP ni_Conj lp } ;
+  ConjNegPred1Estar lp = { cl = EstarC ; pol = Neg ; s = mkAP ni_Conj lp } ;
+
   ConjInd = mkNP ;
 
 oper
   mkFun1, mkFun2 : Str -> N2 = \s -> P.mkN2 (P.mkN s) part_Prep ;
 
   appPred1 : Pred1T -> NP -> Cl =
-    \p, x -> case p.t of {
-               (PA Position) => mkCl x (E.UseComp_estar (mkComp p.s)) ;
-               _ => mkCl x p.s
-             } ;
+    \p, x -> case p.cl of {
+              SerC => mkCl x p.s ;
+              EstarC => mkCl x (E.UseComp_estar (mkComp p.s))
+            } ;
+
+  appPred2 : Pred2T -> NP -> NP -> Cl =
+    \p, x, y -> case p.cl of {
+                  SerC => mkCl x p.s y ;
+                  EstarC => mkCl x (E.UseComp_estar (mkComp (mkAP p.s y)))
+                } ;
+
+  classCtoCK : ClassC -> ClassCK =
+    \c -> case c of {
+      SerC => SerCK ;
+      EstarC => EstarCK
+    };
 
   quantDet : QuantP -> Det =
     \q -> case q of {
@@ -122,16 +135,33 @@ oper
       Neg => mkS negativePol
     } ;
 
-  quantNP : QuantP -> KindT -> NP = 
-    \q, k -> case k.pol of {
-      Pos => mkNP (quantDet q) (mkCN k.n k.a) ;
-      Neg => mkNP (quantDet q) (mkCN k.n (mkRS negativePol (mkRCl which_RP k.a)))
+  kindCN : KindT -> CN = 
+    \k ->
+    case k.pol of {
+      Pos =>
+        case k.cl of {
+          SerCK => mkCN k.a k.n ;
+          EstarCK => (mkCN k.n (mkRS (mkRCl which_RP (E.UseComp_estar (mkComp k.a)) ))) ;
+          FigC => k.n
+        } ;
+      Neg =>
+        case k.cl of {
+          SerCK => (mkCN k.n (mkRS negativePol (mkRCl which_RP k.a))) ;
+          _ => (mkCN k.n (mkRS negativePol (mkRCl which_RP (E.UseComp_estar (mkComp k.a)) )))  -- Fig no puede ser negativo
+        }
     } ;
 
+  quantNP : QuantP -> KindT -> NP =
+    \q, k ->
+      case q of {
+        ForAll => let np = (mkNP thePl_Det (kindCN k)) in (mkNP all_Predet np | np) ;
+        Exist => mkNP someSg_Det (kindCN k)
+      } ;
+
   mkQuantIS : QuantP -> KindT -> Pred1T -> S =
-    \q, k, p -> case p.t of {
-      (PA Position) => (mkSPol p.pol) (mkCl (quantNP q k) (E.UseComp_estar (mkComp p.s))) ;
-      _ => (mkSPol p.pol) (mkCl (quantNP q k) p.s)
+    \q, k, p -> case p.cl of {
+      EstarC => (mkSPol p.pol) (mkCl (quantNP q k) (E.UseComp_estar (mkComp p.s))) ;
+      SerC => (mkSPol p.pol) (mkCl (quantNP q k) p.s)
     } ;
 
 -- structural words
@@ -140,5 +170,6 @@ oper
   such_A = P.mkA "tal" ;
   then_Adv = P.mkAdv "entonces" ;
   element_N = P.mkN "elemento" ;
+  sii_Conj = MS.mkConj "" "si y solo si" P.singular ;
   ni_Conj = MS.mkConj "" "ni" P.singular ;
 }
