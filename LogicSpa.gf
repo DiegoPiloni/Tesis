@@ -104,8 +104,9 @@ lin
 
   ConjInd = mkNP ;
 
-  APred2Univ _ p i _ k = appPred2 p i (quantNP ForAll k) ;
-  APred2Exist _ p i _ k = appPred2 p i (quantNP Exist k) ;
+  APred2Univ _ p i _ k = appPred2Quant p i ForAll k ;
+  APred2Exist _ p i _ k = appPred2Quant p i Exist k ;
+  APred2None _ p i _ k = mkS negativePol (appPred2Quant p i None k) ;
 
 oper
   mkFun1, mkFun2 : Str -> N2 = \s -> P.mkN2 (P.mkN s) part_Prep ;
@@ -121,6 +122,9 @@ oper
                   SerC => mkCl x p.s y ;
                   EstarC => mkCl x (E.UseComp_estar (mkComp (mkAP p.s y)))
                 } ;
+
+  appPred2Quant : Pred2T -> NP -> QuantP -> KindT -> Cl = 
+    \p,i,q,k -> appPred2 p i (quantNP q k) ;
 
   classCtoCK : ClassC -> ClassCK =
     \c -> case c of {

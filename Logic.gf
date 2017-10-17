@@ -93,6 +93,7 @@ data
   -- A está arriba de todos los cuadrados
   APred2Univ : Var -> Pred2 Estar -> Ind -> (ck : ClassK) -> Kind ck -> Atom ;
   APred2Exist : Var -> Pred2 Estar -> Ind -> (ck : ClassK) -> Kind ck -> Atom ;
+  APred2None : Var -> Pred2 Estar -> Ind -> (ck : ClassK) -> Kind ck -> Prop ;
 
   -- Cuantificación simbólica con lista de variables
   -- PQuants : Quant -> [Var] -> Prop -> Prop -> Prop ;
@@ -109,6 +110,7 @@ def
   Transfer (PAtom a) = TransAtom (PAtom a) ;
   Transfer (PNegAtom a) = TransAtom (PNegAtom a) ;
   Transfer (ANPred1 cl p i) = TransNegPred1 (ANPred1 cl p i) ;
+  Transfer (APred2None v p i ck k) = TransAPred2None (APred2None v p i ck k) ;
   Transfer (PConjs c lp) = TransPConjs (PConjs c lp) ;
 
 -- Auxiliar categories and functions --
@@ -210,6 +212,9 @@ fun TransNegPred1 : Prop -> Prop ;
 def
   TransNegPred1 (ANPred1 cl p i) = trNeg1 cl p i ;
 
+fun TransAPred2None : Prop -> Prop ;
+def
+  TransAPred2None (APred2None v p i ck k) = PNeg (Transfer (PAtom (APred2Exist v p i ck k))) ;
 
 -- tr1 or trNeg1 depending polarity
 fun tr1PoN : (pol : Pol) -> (cl : Class) -> Pred1 pol cl -> Ind -> Prop ;

@@ -442,7 +442,7 @@ definida hasta el momento. Pienso que algunas se podrán hacer, otras quedarán 
 17/10
 -----
 
-* Se puede escribir una oración cuantificada sin empezar la frase con "todos"/"alguna", 
+1- Se puede escribir una oración cuantificada sin empezar la frase con "todos"/"alguna", 
 sino que empezando con un individuo. Ver APred2Univ, APred2Exist en Logic.gf
 Ejemplos:
   - A está arriba de todas las figuras rojas
@@ -461,12 +461,22 @@ Por el momento para compilar uso:
 y en gf, importar la gramática compilada:
 "i Logic.pgf"
 
-* Se puede parsear frases usando la palabra "Ninguna" como cuantificador.
+2- Se puede parsear frases usando la palabra "Ninguna" como cuantificador.
 Se traduce a la negación de un existe.
 Ejemplos:
   - ninguna figura grande es roja
   Traduce a:
   ¬〈∃?1 : Grande.?1 : Rojo.?1 〉
+
+3- Extendí el punto 1, con la posibilidad de parsear frases cuantificadas
+usando "ninguna".
+Ver APred2None en Logic.gf. Devuelve Prop, esto permite fijar polaridad negativa en
+la frase. Es decir, no queremos frases como "A está arriba de ninguna figura".
+Inspirado en: http://www.rae.es/consultas/doble-negacion-no-vino-nadie-no-hice-nada-no-tengo-ninguna
+Ejemplo:
+  - A no está arriba de ninguna figura roja
+  Traduce a:
+  ¬〈∃?1 : Rojo.?1 : abajo.A.?1 〉
 
 TODO:
 =====
