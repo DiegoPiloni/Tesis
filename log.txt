@@ -439,12 +439,41 @@ respuestas. Link: https://goo.gl/forms/PPpxlYn84aq5WUeB2.
 Sería interesante analizar (¿Cómo?) que 'estructuras de frases' están quedando afuera de la gramática 
 definida hasta el momento. Pienso que algunas se podrán hacer, otras quedarán como trabajo futuro.
 
+17/10
+-----
 
-TODO: 
+* Se puede escribir una oración cuantificada sin empezar la frase con "todos"/"alguna", 
+sino que empezando con un individuo. Ver APred2Univ, APred2Exist en Logic.gf
+Ejemplos:
+  - A está arriba de todas las figuras rojas
+  Traduce a:
+  〈∀?1 : Rojo.?1 : arriba.A.?1 〉
+  - A y B están a la izquierda de alguna figura cuadrada
+  Traduce a:
+  (〈∃?1 : Cuad.?1 : izq.A.?1 〉 ∧ 〈∃?1 : Cuad.?1 : izq.B.?1 〉)
+  Sobre esta última: ¿Está bien la posibilidad de que la figura cuadrada no sea la misma?
+
+AL INTRODUCIR ESTE CAMBIO COMPILAR LA GRAMÁTICA SE VOLVIÓ MÁS LENTO (1 min aprox).
+Ver si esto es un problema propio o al crecer la gramática la compilación 
+tiende a hacerse más lenta.
+Por el momento para compilar uso:
+"$> gf -j --make LogicSpa.gf LogicSym.gf"
+y en gf, importar la gramática compilada:
+"i Logic.pgf"
+
+* Se puede parsear frases usando la palabra "Ninguna" como cuantificador.
+Se traduce a la negación de un existe.
+Ejemplos:
+  - ninguna figura grande es roja
+  Traduce a:
+  ¬〈∃?1 : Grande.?1 : Rojo.?1 〉
+
+TODO:
+=====
 * Hacer elipsis en conjunción:
     A es rojo y [A] no es grande
     A es rojo y [A] está arriba de B
-* Permitir empezar cuantificación sin "todas"/"alguna".
+* Permitir empezar cuantificación sin "todas"/"alguna". Hecho
     ej: A está arriba de todos los cuadrados.
 * Permitir cuantificación anidada:
     ej: Todos los triangulos están arriba de algún círculo

@@ -76,6 +76,8 @@ lin
 
   ExistIS _ _ k _ _ p = mkQuantIS Exist k p ;
 
+  NoneIS _ _ k _ _ p = mkQuantIS None k p ;
+
   ModKind k _ _ m _ _ = { cl = classCtoCK m.cl ; pol = m.pol ; n = k.n ; a = m.s } ;
 
 -- extension conjunción polimórfica
@@ -102,6 +104,9 @@ lin
 
   ConjInd = mkNP ;
 
+  APred2Univ _ p i _ k = appPred2 p i (quantNP ForAll k) ;
+  APred2Exist _ p i _ k = appPred2 p i (quantNP Exist k) ;
+
 oper
   mkFun1, mkFun2 : Str -> N2 = \s -> P.mkN2 (P.mkN s) part_Prep ;
 
@@ -122,12 +127,6 @@ oper
       SerC => SerCK ;
       EstarC => EstarCK
     };
-
-  quantDet : QuantP -> Det =
-    \q -> case q of {
-      Exist => someSg_Det ;
-      ForAll => every_Det
-    } ;
 
   mkSPol : Pol1 -> (Cl -> S) =
     \pol -> case pol of {
@@ -155,7 +154,8 @@ oper
     \q, k ->
       case q of {
         ForAll => let np = (mkNP thePl_Det (kindCN k)) in (mkNP all_Predet np | np) ;
-        Exist => mkNP someSg_Det (kindCN k)
+        Exist => mkNP someSg_Det (kindCN k) ;
+        None => mkNP (mkDet no_Quant) (kindCN k)
       } ;
 
   mkQuantIS : QuantP -> KindT -> Pred1T -> S =

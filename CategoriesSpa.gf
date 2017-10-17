@@ -7,7 +7,7 @@ param Pred1Type = Original | PA Pred2Type ;
 param Pol1 = Pos | Neg ;
 param ClassC = SerC | EstarC ;
 param ClassCK = SerCK | EstarCK | FigC ;
-param QuantP = Exist | ForAll ;
+param QuantP = Exist | ForAll | None ;
 
 oper KindT : Type = { cl : ClassCK ; pol : Pol1 ; n : CN ; a : AP } ;
 oper Pred1T : Type = { cl : ClassC ; pol : Pol1 ; s : AP } ;
