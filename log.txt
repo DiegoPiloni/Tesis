@@ -485,7 +485,24 @@ TODO:
     A es rojo y [A] está arriba de B
 * Permitir empezar cuantificación sin "todas"/"alguna". Hecho
     ej: A está arriba de todos los cuadrados.
-* Permitir cuantificación anidada:
+* Permitir cuantificación anidada: Hecho
     ej: Todos los triangulos están arriba de algún círculo
 * Permitir que la forma también pueda ser un sustantivo.
   En cuantificación: "Todos los cuadrados ... "
+
+18/10
+-----
+Permito frases que se traducen a fórmulas con cuantificación anidada.
+(Solo dos cuantificadores)
+
+Agregué 4 constructores, muy probablemente no sea la mejor forma, pero
+como para empezar, soluciona el problema.
+
+Ejemplos de frases parseadas:
+    - UnivUniv: "[todas] las figuras rojas están arriba de todas las figuras verdes"
+    
+    - UnivExist: "[todas] las figuras rojas están arriba de alguna figura verde"
+
+    - ExistExist: "alguna figura roja está arriba de alguna figura verde"
+
+    - ExistUniv: "alguna figura roja está arriba de [todas] las figuras verdes"

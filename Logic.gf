@@ -95,6 +95,11 @@ data
   APred2Exist : Var -> Pred2 Estar -> Ind -> (ck : ClassK) -> Kind ck -> Atom ;
   APred2None : Var -> Pred2 Estar -> Ind -> (ck : ClassK) -> Kind ck -> Prop ;
 
+  -- Cuantificación anidada
+  UnivUnivIS : (v1, v2 : Var) -> Pred2 Estar -> (ck1, ck2: ClassK) -> Kind ck1 -> Kind ck2 -> Prop ;
+  UnivExistIS : (v1, v2 : Var) -> Pred2 Estar -> (ck1, ck2: ClassK) -> Kind ck1 -> Kind ck2 -> Prop ;
+  ExistExistIS : (v1, v2 : Var) -> Pred2 Estar -> (ck1, ck2: ClassK) -> Kind ck1 -> Kind ck2 -> Prop ;
+  ExistUnivIS : (v1, v2 : Var) -> Pred2 Estar -> (ck1, ck2: ClassK) -> Kind ck1 -> Kind ck2 -> Prop ;
   -- Cuantificación simbólica con lista de variables
   -- PQuants : Quant -> [Var] -> Prop -> Prop -> Prop ;
 
@@ -112,6 +117,16 @@ def
   Transfer (ANPred1 cl p i) = TransNegPred1 (ANPred1 cl p i) ;
   Transfer (APred2None v p i ck k) = TransAPred2None (APred2None v p i ck k) ;
   Transfer (PConjs c lp) = TransPConjs (PConjs c lp) ;
+  -- Nested Quant
+  Transfer (UnivUnivIS v1 v2 p ck1 ck2 k1 k2) = TransQuantAnid (UnivUnivIS v1 v2 p ck1 ck2 k1 k2) ;
+  Transfer (UnivExistIS v1 v2 p ck1 ck2 k1 k2) = TransQuantAnid (UnivExistIS v1 v2 p ck1 ck2 k1 k2) ;
+  Transfer (ExistExistIS v1 v2 p ck1 ck2 k1 k2) = TransQuantAnid (ExistExistIS v1 v2 p ck1 ck2 k1 k2) ;
+  Transfer (ExistUnivIS v1 v2 p ck1 ck2 k1 k2) = TransQuantAnid (ExistUnivIS v1 v2 p ck1 ck2 k1 k2) ;
+  -- Simple recursive calls
+  Transfer (PConj c p q) = PConj c (Transfer p) (Transfer q) ;
+  Transfer (PImpl p q) = PImpl (Transfer p) (Transfer q) ;
+  Transfer (PEquiv p q) = PEquiv (Transfer p) (Transfer q) ;
+  Transfer (PNeg p) = PNeg (Transfer p) ;
 
 -- Auxiliar categories and functions --
 -- Category to diff polarity
@@ -245,6 +260,19 @@ def
   KindToProp ck (ModKind Figura pol cl p _ _) v = (tr1PoN cl pol p) (IVar v) ;
   -- KindToProp ck (ModKind k pol cl p) v = PConj CAnd ((tr1PoN cl pol p) (IVar v)) (KindToProp Ser k v) ;
 
+fun TransQuantAnid : Prop -> Prop ;
+def
+  TransQuantAnid (UnivUnivIS v1 v2 p ck1 ck2 k1 k2) = PQuant ForAll v1 (Range v1 ck1 k1)
+      (PQuant ForAll v2 (Range v2 ck2 k2) (Transfer (PAtom (APred2 Estar p (IVar v1) (IVar v2))))) ;
+
+  TransQuantAnid (UnivExistIS v1 v2 p ck1 ck2 k1 k2) = PQuant ForAll v1 (Range v1 ck1 k1)
+      (PQuant Exists v2 (Range v2 ck2 k2) (Transfer (PAtom (APred2 Estar p (IVar v1) (IVar v2))))) ;
+
+      TransQuantAnid (ExistExistIS v1 v2 p ck1 ck2 k1 k2) = PQuant Exists v1 (Range v1 ck1 k1)
+      (PQuant Exists v2 (Range v2 ck2 k2) (Transfer (PAtom (APred2 Estar p (IVar v1) (IVar v2))))) ;
+
+      TransQuantAnid (ExistUnivIS v1 v2 p ck1 ck2 k1 k2) = PQuant Exists v1 (Range v1 ck1 k1)
+      (PQuant ForAll v2 (Range v2 ck2 k2) (Transfer (PAtom (APred2 Estar p (IVar v1) (IVar v2))))) ;
 
 -- Transfer function for atomic props. (Takes care of lists of inds/preds).
 fun TransAtom : Prop -> Prop ;
@@ -291,7 +319,7 @@ def
 fun TransPConjs : Prop -> Prop ;
 
 def
-  TransPConjs (PConjs c (BaseProp p1 p2)) = Transfer (PConj c p1 p2) ;
-  TransPConjs (PConjs c (ConsProp p lp)) = Transfer (PConj c p (TransPConjs (PConjs c lp))) ;
+  TransPConjs (PConjs c (BaseProp p1 p2)) = PConj c (Transfer p1) (Transfer p2) ;
+  TransPConjs (PConjs c (ConsProp p lp)) = PConj c (Transfer p) (TransPConjs (PConjs c lp)) ;
 
 }

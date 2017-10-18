@@ -108,6 +108,12 @@ lin
   APred2Exist _ p i _ k = appPred2Quant p i Exist k ;
   APred2None _ p i _ k = mkS negativePol (appPred2Quant p i None k) ;
 
+  -- Cuantificación anidada
+  UnivUnivIS _ _ p _ _ k1 k2 = mkS (appPred2Quant p (quantNP ForAll k1) ForAll k2) ;
+  UnivExistIS _ _ p _ _ k1 k2 = mkS (appPred2Quant p (quantNP ForAll k1) Exist k2) ;
+  ExistExistIS _ _ p _ _ k1 k2 = mkS (appPred2Quant p (quantNP Exist k1) Exist k2) ;
+  ExistUnivIS _ _ p _ _ k1 k2 = mkS (appPred2Quant p (quantNP Exist k1) ForAll k2) ;
+
 oper
   mkFun1, mkFun2 : Str -> N2 = \s -> P.mkN2 (P.mkN s) part_Prep ;
 
