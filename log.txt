@@ -419,11 +419,12 @@ Dupliqué ConjPred1 en:
 
 No es para mi gusto una buena solución, pero al menos es solución.
 
-2) Ahora se puede parsear cuantificación universal escribiendo "todas las figuras...".
+2) Ahora se puede parsear cuantificación universal escribiendo "todas las figuras..." ó "las figuras...".
 
 3) Ver en cuantificación:
-  todas las figuras (que están arriba de ..) Hecho
-  todas las figuras (que no están arriba de ..) Hecho
+  Si el Kind es de clase "Estar", se introduce a una oración subordinada. (Ver mkRS en LogicSpa.gf)
+  todas las figuras (que están arriba de ..)
+  todas las figuras (que no están arriba de ..)
 
 4) Fix: 'si y solo si' estaba seteado como operador binario polimórfico, se podían parsear frases como:
 "A si y solo si B ..." de la misma forma que "A y B son rojos"
@@ -431,7 +432,7 @@ Solución:
 De la misma manera que el implica, cree un nuevo constructor de Prop:
 PEquiv : Prop -> Prop -> Prop ;
 
-5) El jueves 5/10 mostré el trabajo a gente del grupo de PLN + Manu, buenas críticas :) Subo las slides,
+5) El jueves 5/10 mostré el trabajo a gente del grupo de PLN + Manu + Jorge, buenas críticas :) Subo las slides,
 archivo: charla_tesis_pln.pdf
 
 6) Hice un formulario para recopilar datos, tuvo a mi parecer buen feedback. Hasta el momento, hay 32
@@ -443,7 +444,7 @@ definida hasta el momento. Pienso que algunas se podrán hacer, otras quedarán 
 -----
 
 1- Se puede escribir una oración cuantificada sin empezar la frase con "todos"/"alguna", 
-sino que empezando con un individuo. Ver APred2Univ, APred2Exist en Logic.gf
+sino que empezando con un individuo particular. Ver APred2Univ, APred2Exist en Logic.gf
 Ejemplos:
   - A está arriba de todas las figuras rojas
   Traduce a:
@@ -480,7 +481,7 @@ Ejemplo:
 
 TODO:
 =====
-* Hacer elipsis en conjunción:
+* Hacer elipsis del sujeto en conjunción:
     A es rojo y [A] no es grande
     A es rojo y [A] está arriba de B
 * Permitir empezar cuantificación sin "todas"/"alguna". Hecho
@@ -499,10 +500,18 @@ Agregué 4 constructores, muy probablemente no sea la mejor forma, pero
 como para empezar, soluciona el problema.
 
 Ejemplos de frases parseadas:
-    - UnivUniv: "[todas] las figuras rojas están arriba de todas las figuras verdes"
-    
+    - UnivUniv: "[todas] las figuras rojas están arriba de [todas] las figuras verdes"
+    Traduce a:
+    〈∀?1 : Rojo.?1 : 〈∀?2 : Verde.?2 : arriba.?1.?2 〉 〉
+
     - UnivExist: "[todas] las figuras rojas están arriba de alguna figura verde"
+    Traduce a:
+    〈∀?1 : Rojo.?1 : 〈∃?2 : Verde.?2 : arriba.?1.?2 〉 〉
 
     - ExistExist: "alguna figura roja está arriba de alguna figura verde"
+    Traduce a:
+    〈∃?1 : Rojo.?1 : 〈∃?2 : Verde.?2 : arriba.?1.?2 〉 〉
 
     - ExistUniv: "alguna figura roja está arriba de [todas] las figuras verdes"
+    Traduce a:
+    〈∃?1 : Rojo.?1 : 〈∀?2 : Verde.?2 : arriba.?1.?2 〉 〉

@@ -1,2 +1,4 @@
 *.gfo
 *.pgf
+*.vscode
+.DS_Store
