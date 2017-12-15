@@ -1,5 +1,5 @@
 -- Correr desde el shell: gf < script.gfs
-i LogicSpa.gf LogicSym.gf
+i ../Logic.pgf
 rf -lines -file=in | p -lang=Spa | pt -transfer=Transfer | l -bind -lang=Sym | wf -file=aux
 ! uniq aux > unique_aux
 ! diff out unique_aux
